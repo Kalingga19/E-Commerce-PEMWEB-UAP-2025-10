@@ -15,15 +15,20 @@ return new class extends Migration
             $table->id()->primary();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('name');
+            $table->string('slug')->unique();
             $table->string('logo');
             $table->text('about');
-            $table->string('phone');
+            $table->string('phone')->nullable();
             $table->string('address_id');
             $table->string('city');
             $table->text('address');
             $table->string('postal_code');
             $table->boolean('is_verified')->default(false);
             $table->timestamps();
+
+            $table->string('bank_name')->nullable();
+            $table->string('bank_account_name')->nullable();
+            $table->string('bank_account_number')->nullable();
         });
     }
 
