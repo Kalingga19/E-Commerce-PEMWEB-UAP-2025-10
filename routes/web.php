@@ -45,5 +45,16 @@ Route::middleware(['auth'])->group(function () {
         ->name('wallet.topup.process');
 });
 
+Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+    Route::get('/admin/dashboard', [AdminController::class, 'index']);
+});
+
+Route::middleware(['auth:sanctum', 'seller'])->group(function () {
+    Route::post('/seller/products', [SellerProductController::class, 'store']);
+});
+
+Route::middleware(['auth:sanctum', 'customer'])->group(function () {
+    Route::post('/checkout', [CheckoutController::class, 'create']);
+});
 
 require __DIR__.'/auth.php';
