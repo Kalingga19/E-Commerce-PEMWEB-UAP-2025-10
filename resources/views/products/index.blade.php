@@ -1,11 +1,20 @@
-@extends('layouts.app')
+@foreach ($products as $product)
+    <div class="product-card">
+        <img src="{{ $product->images->first()->image ?? '/default.png' }}" />
 
-@section('title', 'Daftar Produk')
+        <h3>{{ $product->name }}</h3>
+        <p>Rp {{ number_format($product->price, 0, ',', '.') }}</p>
+    </div>
+@endforeach
+<style>
+    .product-card {
+        border: 1px solid #ccc;
+        padding: 16px;
+        margin: 16px;
+        text-align: center;
+    }
 
-@section('content')
-    <h1>List Produk</h1>
-
-    @foreach($products as $product)
-        <p>{{ $product->name }} - Rp{{ $product->price }}</p>
-    @endforeach
-@endsection
+    .product-card img {
+        max-width: 100%;
+        height: auto;
+    }

@@ -16,7 +16,12 @@
                         <div class="d-flex">
                             <i class="bi bi-info-circle me-2"></i>
                             <div>
-                                <small>Saldo saat ini: <strong>Rp {{ number_format(auth()->user()->balance) }}</strong></small>
+                                <small>
+                                    Saldo saat ini: 
+                                    <strong>
+                                        Rp {{ number_format(auth()->user()?->balance->balance ?? 0) }}
+                                    </strong>
+                                </small>
                             </div>
                         </div>
                     </div>
