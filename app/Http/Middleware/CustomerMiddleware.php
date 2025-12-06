@@ -10,13 +10,9 @@ class CustomerMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth()->user()->role !== 'customer') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized. Customer access only.'
-            ], 403);
+        if (!auth()->check() || auth()->user()->role !== 'customer') {
+            abort(403, 'Anda tidak memiliki akses sebagai Customer.');
         }
-
         return $next($request);
     }
 }

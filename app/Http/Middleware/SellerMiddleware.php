@@ -10,11 +10,16 @@ class SellerMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth()->user()->role !== 'seller') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized. Seller access only.'
-            ], 403);
+        $user = auth()->user();
+
+        // role salah
+        if ($user->role !== 'member') {
+            abort(403, 'Anda bukan member.');
+        }
+
+        // belum buat toko
+        if (!$user->store) {
+            abort(403, 'Anda belum memiliki toko.');
         }
 
         return $next($request);

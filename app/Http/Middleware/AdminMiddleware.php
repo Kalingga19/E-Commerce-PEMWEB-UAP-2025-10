@@ -10,13 +10,9 @@ class AdminMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth()->user()->role !== 'admin') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized. Admin access only.'
-            ], 403);
+        if (!auth()->check() || auth()->user()->role !== 'admin') {
+            abort(403, 'Anda tidak memiliki akses sebagai Admin.');
         }
-
         return $next($request);
     }
 }
