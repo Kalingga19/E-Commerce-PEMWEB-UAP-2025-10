@@ -16,6 +16,6 @@ class HomeController extends Controller
             ->take(12)
             ->get();
 
-        return view('pages.home', compact('categories', 'latestProducts'));
+        return view('pages.homepage', compact('categories', 'latestProducts'));
     }
 }

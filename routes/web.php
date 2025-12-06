@@ -17,6 +17,9 @@ use App\Http\Controllers\PaymentController;
 // Controllers Admin & Seller
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\SellerProductController;
+use App\Http\Controllers\SellerProfileController;
+use App\Http\Controllers\ProfileDashboardController as SellerDashboardController;
+
 
 Route::get('/', [ProductController::class, 'index'])->name('home');
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');

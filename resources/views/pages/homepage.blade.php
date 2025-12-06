@@ -15,11 +15,11 @@
                     @foreach($categories as $category)
                     <div class="form-check mb-2">
                         <input class="form-check-input category-filter" 
-                               type="checkbox" 
-                               name="categories[]" 
-                               value="{{ $category->id }}"
-                               id="cat-{{ $category->id }}"
-                               {{ in_array($category->id, request('categories', [])) ? 'checked' : '' }}>
+                            type="checkbox" 
+                            name="categories[]" 
+                            value="{{ $category->id }}"
+                            id="cat-{{ $category->id }}"
+                            {{ in_array($category->id, request('categories', [])) ? 'checked' : '' }}>
                         <label class="form-check-label" for="cat-{{ $category->id }}">
                             {{ $category->name }}
                         </label>
@@ -67,15 +67,15 @@
     <div class="col-md-9">
         <h2 class="mb-4">Semua Produk</h2>
         
-        @if($products->count() > 0)
+        @if($latestProducts->count() > 0)
         <div class="row">
-            @foreach($products as $product)
-                @include('partials.components.product-card', ['product' => $product])
+            @foreach($latestProducts as $latestProducts)
+                @include('partials.components.product-card', ['product' => $latestProducts])
             @endforeach
         </div>
         
         <div class="mt-4">
-            {{ $products->links() }}
+            {{ $latestProducts->links() }}
         </div>
         @else
         <div class="alert alert-info">

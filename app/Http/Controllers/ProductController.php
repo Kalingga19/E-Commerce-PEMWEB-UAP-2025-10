@@ -13,10 +13,13 @@ class ProductController extends Controller
     {
         $products = Product::with(['images' => function($q) {
             $q->where('is_thumbnail', true);
-        }, 'store'])->latest()->get();
+        }])->latest()->get();
 
-        return view('products.index', compact('products'));
+        $categories = ProductCategory::all();
+
+        return view('products.index', compact('products', 'categories'));
     }
+
 
     // DETAIL PRODUK
     public function show($slug)
