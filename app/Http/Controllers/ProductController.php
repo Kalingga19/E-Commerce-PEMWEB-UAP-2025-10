@@ -11,26 +11,19 @@ class ProductController extends Controller
     // HALAMAN HOME (LIST PRODUK)
     public function index()
     {
-        $products = Product::with(['images' => function ($q) {
+        $products = Product::with(['images' => function($q) {
             $q->where('is_thumbnail', true);
-        }])->latest()->paginate(12); // PAGINATION AMAN
+        }, 'store'])->latest()->get();
 
-        $categories = ProductCategory::all();
-
-        return view('products.index', compact('products', 'categories'));
+        return view('products.index', compact('products'));
     }
 
     // DETAIL PRODUK
     public function show($slug)
     {
-        $product = Product::with([
-            'images',
-            'store',
-        ])
-        // HAPUS reviews UNTUK MENGHINDARI ERROR
-        // Tambahkan lagi kalau fitur review sudah dibuat
-        ->where('slug', $slug)
-        ->firstOrFail();
+        $product = Product::with(['images', 'store'])
+            ->where('slug', $slug)
+            ->firstOrFail();
 
         return view('products.show', compact('product'));
     }

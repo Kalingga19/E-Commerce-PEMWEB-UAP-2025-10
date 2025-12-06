@@ -4,33 +4,31 @@ namespace App\Http\Controllers;
 
 use App\Models\VirtualAccount;
 use App\Models\Transaction;
+use App\Models\StoreBalance;
+use App\Models\StoreBalanceHistory;
 use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
-    /**
-     * HALAMAN PENCARIAN VA
-     */
+    // ============================================
+    // 1. Halaman Pencarian VA
+    // ============================================
     public function index(Request $request)
     {
         $va = null;
 
-        // Jika user memasukkan kode VA
-        if ($request->has('va_code')) {
+        // kalau user mengetik kode VA
+        if ($request->va_code) {
             $va = VirtualAccount::where('va_code', $request->va_code)->first();
-
-            if (!$va) {
-                return back()->with('error', 'Virtual Account tidak ditemukan.');
-            }
         }
 
-        return view('payment.payment-page', compact('va'));
+        return view('pages.payment-page', compact('va'));
     }
 
 
-    /**
-     * KONFIRMASI PEMBAYARAN VA
-     */
+    // ============================================
+    // 2. Konfirmasi Pembayaran VA
+    // ============================================
     public function confirm(Request $request)
     {
         $request->validate([
@@ -38,43 +36,63 @@ class PaymentController extends Controller
             'amount'  => 'required|numeric'
         ]);
 
+        // Ambil VA
         $va = VirtualAccount::where('va_code', $request->va_code)->first();
 
         if (!$va) {
-            return back()->with('error', 'VA tidak ditemukan.');
+            return back()->with('error', 'Kode VA tidak ditemukan.');
         }
 
-        // Cek nominal harus sama
+        // Jangan proses kalau sudah paid
+        if ($va->status !== 'pending') {
+            return back()->with('error', 'Pembayaran sudah diproses.');
+        }
+
+        // Nominal harus tepat
         if ($va->amount != $request->amount) {
-            return back()->with('error', 'Nominal transfer tidak sesuai.');
-        }
-
-        // Kalau sudah dibayar
-        if ($va->status === 'paid') {
-            return back()->with('error', 'VA ini sudah dibayar sebelumnya.');
+            return back()->with('error', 'Nominal tidak sesuai dengan tagihan.');
         }
 
         // Update status VA
-        $va->update([
-            'status' => 'paid'
-        ]);
+        $va->status = 'paid';
+        $va->save();
 
-        /**
-         * Jika VA adalah pembayaran pembelian
-         * Maka update status transaksi user
-         */
+
+        // Jika VA untuk pembelian
         if ($va->type === 'purchase' && $va->transaction_id) {
+
             $transaction = Transaction::find($va->transaction_id);
 
             if ($transaction) {
+
+                // Update transaksi → paid
                 $transaction->payment_status = 'paid';
-                $transaction->status = 'processing'; // atau pending, terserah flowmu
+                $transaction->paid_at = now();
                 $transaction->save();
+
+                // Tambahkan saldo ke toko
+                $balance = StoreBalance::firstOrCreate(
+                    ['store_id' => $transaction->store_id],
+                    ['balance' => 0]
+                );
+
+                $balance->balance += $va->amount;
+                $balance->save();
+
+                // Catat riwayat saldo toko
+                StoreBalanceHistory::create([
+                    'store_balance_id' => $balance->id,
+                    'type' => 'income',
+                    'reference_id' => $transaction->id,
+                    'reference_type' => 'transaction',
+                    'amount' => $va->amount,
+                    'remarks' => 'Pembayaran transaksi #' . $transaction->id,
+                ]);
             }
         }
 
         return redirect()
-            ->route('payment.index', ['va_code' => $va->va_code])
-            ->with('success', 'Pembayaran berhasil dikonfirmasi!');
+            ->route('customer.orders')
+            ->with('success', 'Pembayaran berhasil! Pesanan sedang diproses.');
     }
 }

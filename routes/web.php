@@ -40,20 +40,18 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/wallet/topup', [WalletController::class, 'topup'])->name('wallet.topup');
     Route::post('/wallet/topup', [WalletController::class, 'processTopup'])->name('wallet.topup.process');
 
-    // Checkout
+    // Payment VA
+    Route::get('/payment', [PaymentController::class, 'index'])->name('payment.index');
+    Route::get('/payment/{transactionId}', [PaymentController::class, 'showForTransaction'])->name('payment.page');
+    Route::post('/payment/confirm', [PaymentController::class, 'confirm'])->name('payment.confirm');
+
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
 
-    // Payment VA
-    Route::get('/payment', [PaymentController::class, 'index'])->name('payment.index');
-    Route::post('/payment/confirm', [PaymentController::class, 'confirm'])->name('payment.confirm');
-
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
-    Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
-    Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
-    Route::delete('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
-
+    Route::post('/cart/{id}/update', [CartController::class, 'update'])->name('cart.update');
+    Route::delete('/cart/{id}/delete', [CartController::class, 'delete'])->name('cart.delete');
 });
 
 Route::middleware(['auth', 'admin'])->group(function () {
@@ -136,5 +134,29 @@ Route::middleware(['auth', 'customer'])->group(function () {
     Route::get('/orders/{id}', [\App\Http\Controllers\CustomerOrderController::class, 'show'])
         ->name('customer.orders.show');
 });
+
+Route::middleware(['auth'])->prefix('customer')->name('customer.')->group(function () {
+
+    // daftar pesanan
+    Route::get('/orders', [CustomerOrderController::class, 'index'])
+        ->name('orders');
+
+    // detail pesanan
+    Route::get('/orders/{id}', [CustomerOrderController::class, 'detail'])
+        ->name('orders.detail');
+
+    // konfirmasi pesanan diterima
+    Route::post('/orders/{id}/complete', [CustomerOrderController::class, 'complete'])
+        ->name('orders.complete');
+
+    // beri ulasan
+    Route::post('/orders/{id}/review', [CustomerOrderController::class, 'review'])
+        ->name('orders.review');
+
+    // batalkan pesanan
+    Route::delete('/orders/{id}/cancel', [CustomerOrderController::class, 'cancel'])
+        ->name('orders.cancel');
+});
+
 
 require __DIR__.'/auth.php';

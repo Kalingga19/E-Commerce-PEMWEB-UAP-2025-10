@@ -10,16 +10,9 @@ return new class extends Migration
     {
         Schema::create('carts', function (Blueprint $table) {
             $table->id();
-
-            // User pemilik cart
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-
-            // Produk dalam cart
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
-
-            // Jumlah barang
             $table->integer('quantity')->default(1);
-
             $table->timestamps();
         });
     }

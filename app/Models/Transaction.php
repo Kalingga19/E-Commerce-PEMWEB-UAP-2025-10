@@ -22,7 +22,14 @@ class Transaction extends Model
         'grand_total',
         'payment_status',
         'order_status',
-        'payout_status'
+        'payout_status',
+        'status',
+        'payment_method',
+        'paid_at',
+        'shipped_at',
+        'completed_at',
+        'cancel_reason',
+        'cancel_note',
     ];
 
     protected $casts = [
@@ -46,7 +53,6 @@ class Transaction extends Model
     // DETAIL TRANSAKSI
     public function details()
     {
-        return $this->hasMany(TransactionDetail::class, 'transaction_id');
+        return $this->hasMany(TransactionDetail::class);
     }
-    
 }

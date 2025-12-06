@@ -1,79 +1,101 @@
 @extends('layouts.app')
 
+@section('title', 'Keranjang Belanja')
+
 @section('content')
-<div class="container py-5">
+<div class="container py-4">
 
     <h2 class="mb-4">Keranjang Belanja</h2>
 
-    @if (session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
+    @if($cartItems->count() > 0)
 
-    @if (empty($cart))
-        <p class="text-muted">Keranjang masih kosong.</p>
-        <a href="{{ route('home') }}" class="btn btn-primary">Belanja Sekarang</a>
+    <div class="row">
+
+        <!-- LIST ITEM -->
+        <div class="col-md-8">
+            @foreach($cartItems as $item)
+            <div class="card mb-3">
+                <div class="card-body d-flex align-items-center">
+
+                    {{-- Gambar --}}
+                    <img 
+                        src="{{ asset('storage/' . ($item->product->images->first()->image ?? 'default.png')) }}"
+                        width="80" height="80"
+                        class="rounded me-3"
+                        style="object-fit: cover;"
+                    >
+
+                    {{-- Info Produk --}}
+                    <div class="flex-grow-1">
+                        <h5 class="mb-1">{{ $item->product->name }}</h5>
+
+                        <p class="text-muted mb-2">
+                            Rp {{ number_format($item->product->price) }}
+                        </p>
+
+                        {{-- Update Jumlah --}}
+                        <form action="{{ route('cart.update', $item->id) }}" method="POST" class="d-flex">
+                            @csrf
+                            <input 
+                                type="number" 
+                                name="quantity" 
+                                min="1" 
+                                value="{{ $item->quantity }}" 
+                                class="form-control w-25"
+                            >
+                            <button class="btn btn-outline-primary ms-2">
+                                Update
+                            </button>
+                        </form>
+                    </div>
+
+                    {{-- Delete --}}
+                    <form action="{{ route('cart.delete', $item->id) }}" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <button class="btn btn-outline-danger ms-2">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+            @endforeach
+        </div>
+
+        <!-- SUMMARY -->
+        <div class="col-md-4">
+            <div class="card sticky-top" style="top: 20px;">
+                <div class="card-body">
+
+                    <h5>Ringkasan Belanja</h5>
+
+                    <h3 class="text-primary fw-bold">
+                        Rp {{ number_format($subtotal) }}
+                    </h3>
+
+                    <a href="{{ route('checkout.index') }}" class="btn btn-success w-100 mt-3">
+                        Lanjut Checkout
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
     @else
 
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Produk</th>
-                    <th>Harga</th>
-                    <th>Qty</th>
-                    <th>Subtotal</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
+    <div class="text-center py-5">
+        <i class="bi bi-cart-x display-4 text-muted"></i>
+        <h4 class="mt-3">Keranjang kosong</h4>
+        <p class="text-muted">Tambahkan produk ke keranjang dulu</p>
 
-            <tbody>
-                @php $total = 0; @endphp
-
-                @foreach ($cart as $item)
-                    @php
-                        $subtotal = $item['price'] * $item['quantity'];
-                        $total += $subtotal;
-                    @endphp
-
-                    <tr>
-                        <td>
-                            <img src="{{ asset('storage/' . $item['image']) }}" width="70">
-                            <strong>{{ $item['name'] }}</strong>
-                        </td>
-
-                        <td>Rp {{ number_format($item['price'],0,',','.') }}</td>
-
-                        <td>
-                            <form action="{{ route('cart.update') }}" method="POST" class="d-inline">
-                                @csrf
-                                <input type="hidden" name="product_id" value="{{ $item['id'] }}">
-                                <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1"
-                                       class="form-control d-inline w-50">
-                                <button class="btn btn-sm btn-primary mt-1">Update</button>
-                            </form>
-                        </td>
-
-                        <td>Rp {{ number_format($subtotal,0,',','.') }}</td>
-
-                        <td>
-                            <form action="{{ route('cart.remove') }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="product_id" value="{{ $item['id'] }}">
-                                <button class="btn btn-danger btn-sm">Hapus</button>
-                            </form>
-                        </td>
-                    </tr>
-                @endforeach
-
-                <tr>
-                    <th colspan="3" class="text-end">Total</th>
-                    <th colspan="2">Rp {{ number_format($total,0,',','.') }}</th>
-                </tr>
-
-            </tbody>
-        </table>
-
-        <a href="/checkout" class="btn btn-success btn-lg">Lanjut ke Checkout</a>
+        <a href="{{ route('home') }}" class="btn btn-primary mt-3">
+            Belanja Sekarang
+        </a>
+    </div>
 
     @endif
+
 </div>
 @endsection
