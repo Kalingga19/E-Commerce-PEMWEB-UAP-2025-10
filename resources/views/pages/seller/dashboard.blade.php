@@ -131,11 +131,11 @@
 
                 @if($store->logo)
                     <img src="{{ asset('storage/' . $store->logo) }}"
-                         class="rounded-circle mb-3"
-                         style="width:100px;height:100px;object-fit:cover;">
+                        class="rounded-circle mb-3"
+                        style="width:100px;height:100px;object-fit:cover;">
                 @else
                     <div class="rounded-circle bg-secondary d-inline-flex align-items-center justify-content-center mb-3"
-                         style="width:100px;height:100px;">
+                        style="width:100px;height:100px;">
                         <i class="bi bi-shop fs-1 text-white"></i>
                     </div>
                 @endif

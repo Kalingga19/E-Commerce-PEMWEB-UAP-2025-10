@@ -158,8 +158,8 @@
                                     </a>
 
                                     <form action="{{ route('seller.products.destroy', $product->id) }}"
-                                          method="POST"
-                                          onsubmit="return confirm('Hapus produk ini?')">
+                                        method="POST"
+                                        onsubmit="return confirm('Hapus produk ini?')">
                                         @csrf
                                         @method('DELETE')
                                         <button class="btn btn-outline-danger">

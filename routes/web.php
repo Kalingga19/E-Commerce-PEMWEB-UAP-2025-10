@@ -102,7 +102,7 @@ Route::middleware(['auth', 'seller'])
         Route::get('/orders/{id}', [App\Http\Controllers\SellerOrderController::class, 'show'])
             ->name('orders.show');
 
-        Route::put('/orders/{id}/status', [App\Http\Controllers\SellerOrderController::class, 'updateStatus'])
+        Route::put('/orders/{id}/status', [SellerOrderController::class, 'updateStatus'])
             ->name('orders.updateStatus');
 
         // Saldo Toko
@@ -129,5 +129,12 @@ Route::post('/cart/add', [\App\Http\Controllers\CartController::class, 'add'])->
 Route::post('/cart/update', [\App\Http\Controllers\CartController::class, 'update'])->name('cart.update');
 Route::post('/cart/remove', [\App\Http\Controllers\CartController::class, 'remove'])->name('cart.remove');
 
+Route::middleware(['auth', 'customer'])->group(function () {
+    Route::get('/orders', [\App\Http\Controllers\CustomerOrderController::class, 'index'])
+        ->name('customer.orders');
+
+    Route::get('/orders/{id}', [\App\Http\Controllers\CustomerOrderController::class, 'show'])
+        ->name('customer.orders.show');
+});
 
 require __DIR__.'/auth.php';

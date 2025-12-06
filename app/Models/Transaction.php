@@ -21,6 +21,8 @@ class Transaction extends Model
         'tax',
         'grand_total',
         'payment_status',
+        'order_status',
+        'payout_status'
     ];
 
     protected $casts = [
@@ -29,21 +31,22 @@ class Transaction extends Model
         'grand_total' => 'decimal:2',
     ];
 
+    // PEMBELI
     public function buyer()
     {
-        return $this->belongsTo(Buyer::class);
+        return $this->belongsTo(User::class, 'buyer_id');
     }
+
+    // TOKO
     public function store()
     {
         return $this->belongsTo(Store::class);
     }
 
-    public function transactionDetails()
+    // DETAIL TRANSAKSI
+    public function details()
     {
-        return $this->hasMany(TransactionDetail::class);
+        return $this->hasMany(TransactionDetail::class, 'transaction_id');
     }
-    public function productReviews()
-    {
-        return $this->hasMany(ProductReview::class);
-    }
+    
 }
