@@ -8,13 +8,13 @@ use Illuminate\Http\Request;
 
 class CustomerOrderController extends Controller
 {
-    // ============================================================
-    // LIST PESANAN CUSTOMER
-    // ============================================================
+    // ==========================================================
+    // LIST ORDER
+    // ==========================================================
     public function index()
     {
-        $orders = Transaction::where('buyer_id', auth()->id())
-            ->with(['transactionDetails.product.images', 'transactionDetails.product.store'])
+        $orders = Transaction::with(['transactionDetails.product.images'])
+            ->where('buyer_id', auth()->id())
             ->latest()
             ->get();
 
@@ -22,93 +22,91 @@ class CustomerOrderController extends Controller
     }
 
 
-    // ============================================================
-    // DETAIL PESANAN
-    // ============================================================
+    // ==========================================================
+    // DETAIL ORDER
+    // ==========================================================
     public function detail($id)
     {
-        $order = Transaction::where('buyer_id', auth()->id())
-            ->with([
-                'transactionDetails.product.images',
-                'transactionDetails.product.store'
-            ])
-            ->findOrFail($id);
+        $order = Transaction::with([
+            'transactionDetails.product.images',
+            'transactionDetails.product.store'
+        ])
+        ->where('buyer_id', auth()->id())
+        ->findOrFail($id);
 
         return view('pages.customer.order-detail', compact('order'));
     }
 
 
-    // ============================================================
+    // ==========================================================
     // KONFIRMASI PESANAN SELESAI
-    // ============================================================
+    // ==========================================================
     public function complete($id)
     {
         $order = Transaction::where('buyer_id', auth()->id())->findOrFail($id);
 
         if ($order->status !== 'shipped') {
-            return back()->with('error', 'Pesanan belum dikirim.');
+            return back()->with('error', 'Pesanan belum dapat dikonfirmasi.');
         }
 
         $order->status = 'completed';
         $order->completed_at = now();
         $order->save();
 
-        return back()->with('success', 'Pesanan berhasil dikonfirmasi selesai.');
+        return back()->with('success', 'Pesanan berhasil dikonfirmasi!');
     }
 
 
-    // ============================================================
+    // ==========================================================
     // REVIEW PRODUK
-    // ============================================================
+    // ==========================================================
     public function review(Request $request, $id)
     {
         $request->validate([
             'rating' => 'required|integer|min:1|max:5',
-            'review' => 'nullable|string|max:500'
+            'review' => 'nullable|string'
         ]);
 
         $order = Transaction::where('buyer_id', auth()->id())->findOrFail($id);
 
         if ($order->status !== 'completed') {
-            return back()->with('error', 'Pesanan belum selesai, tidak dapat review.');
+            return back()->with('error', 'Pesanan belum selesai, tidak bisa review.');
         }
 
         foreach ($order->transactionDetails as $detail) {
             ProductReview::create([
                 'product_id' => $detail->product_id,
-                'user_id' => auth()->id(),
-                'transaction_id' => $order->id,
-                'rating' => $request->rating,
-                'review' => $request->review
+                'user_id'    => auth()->id(),
+                'rating'     => $request->rating,
+                'review'     => $request->review,
             ]);
         }
 
-        return back()->with('success', 'Terima kasih! Ulasan Anda telah dikirim.');
+        return back()->with('success', 'Ulasan berhasil dikirim!');
     }
 
 
-    // ============================================================
-    // PEMBATALAN PESANAN
-    // ============================================================
+    // ==========================================================
+    // CANCEL ORDER
+    // ==========================================================
     public function cancel(Request $request, $id)
     {
-        $request->validate([
-            'cancel_reason' => 'required'
-        ]);
-
         $order = Transaction::where('buyer_id', auth()->id())->findOrFail($id);
 
-        if (!in_array($order->status, ['pending', 'processing'])) {
-            return back()->with('error', 'Pesanan tidak dapat dibatalkan.');
+        if (!in_array($order->status, ['pending', 'processing']) || $order->payment_status === 'paid') {
+            return back()->with('error', 'Pesanan tidak bisa dibatalkan.');
         }
 
-        // update status
+        $request->validate([
+            'cancel_reason' => 'required|string',
+            'cancel_note'   => 'nullable|string'
+        ]);
+
         $order->status = 'cancelled';
         $order->cancel_reason = $request->cancel_reason;
         $order->cancel_note = $request->cancel_note;
         $order->save();
 
-        return redirect()->route('customer.orders')
-            ->with('success', 'Pesanan berhasil dibatalkan.');
+        return back()->with('success', 'Pesanan berhasil dibatalkan.');
     }
 }

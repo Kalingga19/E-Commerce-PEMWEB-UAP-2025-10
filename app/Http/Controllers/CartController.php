@@ -3,63 +3,73 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\CartItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
+    // =====================================================
+    // TAMPILKAN CART
+    // =====================================================
     public function index()
     {
-        $cartItems = Cart::with('product.images')
-            ->where('user_id', auth()->id())
-            ->get();
+        $cart = Cart::firstOrCreate(['user_id' => auth()->id()]);
+        $cartItems = $cart->items()->with('product.images')->get();
 
-        $subtotal = $cartItems->sum(
-            fn($item) => $item->quantity * $item->product->price
-        );
-
-        return view('pages.cart.index', compact('cartItems', 'subtotal'));
+        return view('pages.cart', compact('cartItems'));
     }
 
-
-    public function add(Request $request)
+    // =====================================================
+    // ADD PRODUCT TO CART
+    // =====================================================
+    public function add(Request $request, $product_id)
     {
-        $request->validate(['product_id' => 'required|integer']);
+        $cart = Cart::firstOrCreate(['user_id' => auth()->id()]);
 
-        $cart = Cart::where('user_id', auth()->id())
-                ->where('product_id', $request->product_id)
-                ->first();
+        $item = CartItem::where('cart_id', $cart->id)
+            ->where('product_id', $product_id)
+            ->first();
 
-        if ($cart) {
-            $cart->quantity += 1;
-            $cart->save();
+        if ($item) {
+            $item->quantity += 1;
+            $item->save();
         } else {
-            Cart::create([
-                'user_id' => auth()->id(),
-                'product_id' => $request->product_id,
-                'quantity' => 1,
+            CartItem::create([
+                'cart_id' => $cart->id,
+                'product_id' => $product_id,
+                'quantity' => 1
             ]);
         }
 
-        return back()->with('success', 'Produk ditambahkan ke keranjang.');
+        return redirect()->route('cart.index')
+            ->with('success', 'Produk ditambahkan ke keranjang!');
     }
 
-
-    public function update(Request $request, $id)
+    // =====================================================
+    // UPDATE ITEM QUANTITY
+    // =====================================================
+    public function update(Request $request, $item_id)
     {
-        $cart = Cart::where('user_id', auth()->id())->findOrFail($id);
+        $request->validate([
+            'quantity' => 'required|integer|min:1'
+        ]);
 
-        $cart->update(['quantity' => $request->quantity]);
+        $item = CartItem::findOrFail($item_id);
 
-        return back()->with('success', 'Jumlah diperbarui.');
+        $item->quantity = $request->quantity;
+        $item->save();
+
+        return back()->with('success', 'Keranjang diperbarui!');
     }
 
-
-    public function delete($id)
+    // =====================================================
+    // REMOVE ITEM FROM CART
+    // =====================================================
+    public function remove($item_id)
     {
-        $cart = Cart::where('user_id', auth()->id())->findOrFail($id);
-        $cart->delete();
+        CartItem::findOrFail($item_id)->delete();
 
-        return back()->with('success', 'Produk dihapus dari keranjang.');
+        return back()->with('success', 'Item dihapus dari keranjang.');
     }
 }

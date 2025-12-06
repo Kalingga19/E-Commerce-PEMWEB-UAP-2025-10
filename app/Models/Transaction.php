@@ -38,6 +38,12 @@ class Transaction extends Model
         'grand_total' => 'decimal:2',
     ];
 
+    protected $dates = [
+        'paid_at',
+        'shipped_at',
+        'completed_at'
+    ];
+
     // PEMBELI
     public function buyer()
     {
@@ -51,8 +57,8 @@ class Transaction extends Model
     }
 
     // DETAIL TRANSAKSI
-    public function details()
+    public function transactionDetails()
     {
-        return $this->hasMany(TransactionDetail::class);
+        return $this->hasMany(TransactionDetail::class, 'transaction_id');
     }
 }

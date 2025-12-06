@@ -10,25 +10,28 @@ use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
-    // ============================================
-    // 1. Halaman Pencarian VA
-    // ============================================
+    // ===========================================================
+    // HALAMAN PENCARIAN VA
+    // ===========================================================
     public function index(Request $request)
     {
         $va = null;
 
-        // kalau user mengetik kode VA
         if ($request->va_code) {
             $va = VirtualAccount::where('va_code', $request->va_code)->first();
+
+            if (!$va) {
+                return back()->with('error', 'Kode Virtual Account tidak ditemukan.');
+            }
         }
 
-        return view('pages.payment-page', compact('va'));
+        return view('payment.payment-page', compact('va'));
     }
 
 
-    // ============================================
-    // 2. Konfirmasi Pembayaran VA
-    // ============================================
+    // ===========================================================
+    // KONFIRMASI PEMBAYARAN VA
+    // ===========================================================
     public function confirm(Request $request)
     {
         $request->validate([
@@ -36,63 +39,66 @@ class PaymentController extends Controller
             'amount'  => 'required|numeric'
         ]);
 
-        // Ambil VA
         $va = VirtualAccount::where('va_code', $request->va_code)->first();
 
         if (!$va) {
-            return back()->with('error', 'Kode VA tidak ditemukan.');
+            return back()->with('error', 'VA tidak ditemukan!');
         }
 
-        // Jangan proses kalau sudah paid
-        if ($va->status !== 'pending') {
-            return back()->with('error', 'Pembayaran sudah diproses.');
+        if ($va->status === 'paid') {
+            return back()->with('error', 'VA ini sudah dibayar.');
         }
 
-        // Nominal harus tepat
-        if ($va->amount != $request->amount) {
-            return back()->with('error', 'Nominal tidak sesuai dengan tagihan.');
+        // Cek nominal harus sama
+        if ($request->amount != $va->amount) {
+            return back()->with('error', 'Nominal pembayaran tidak sesuai.');
         }
 
-        // Update status VA
+
+        // ===========================================================
+        // UPDATE STATUS VA
+        // ===========================================================
         $va->status = 'paid';
         $va->save();
 
 
-        // Jika VA untuk pembelian
-        if ($va->type === 'purchase' && $va->transaction_id) {
+        // ===========================================================
+        // UPDATE STATUS TRANSAKSI
+        // ===========================================================
+        if ($va->transaction_id) {
 
-            $transaction = Transaction::find($va->transaction_id);
+            $trx = Transaction::find($va->transaction_id);
 
-            if ($transaction) {
+            if ($trx) {
+                $trx->payment_status = 'paid';
+                $trx->paid_at = now();
+                $trx->status = 'processing'; // Setelah bayar → langsung diproses
+                $trx->save();
 
-                // Update transaksi → paid
-                $transaction->payment_status = 'paid';
-                $transaction->paid_at = now();
-                $transaction->save();
 
-                // Tambahkan saldo ke toko
+                // ===========================================================
+                // MASUKKAN PENDAPATAN KE SALDO TOKO
+                // ===========================================================
                 $balance = StoreBalance::firstOrCreate(
-                    ['store_id' => $transaction->store_id],
+                    ['store_id' => $trx->store_id],
                     ['balance' => 0]
                 );
 
-                $balance->balance += $va->amount;
-                $balance->save();
+                $balance->increment('balance', $trx->grand_total);
 
-                // Catat riwayat saldo toko
+                // Catat history pendapatan
                 StoreBalanceHistory::create([
                     'store_balance_id' => $balance->id,
-                    'type' => 'income',
-                    'reference_id' => $transaction->id,
-                    'reference_type' => 'transaction',
-                    'amount' => $va->amount,
-                    'remarks' => 'Pembayaran transaksi #' . $transaction->id,
+                    'type'             => 'income',
+                    'reference_id'     => $trx->id,
+                    'reference_type'   => 'transaction',
+                    'amount'           => $trx->grand_total,
+                    'remarks'          => 'Pembayaran transaksi #' . $trx->code,
                 ]);
             }
         }
 
-        return redirect()
-            ->route('customer.orders')
-            ->with('success', 'Pembayaran berhasil! Pesanan sedang diproses.');
+
+        return back()->with('success', 'Pembayaran berhasil dikonfirmasi!');
     }
 }

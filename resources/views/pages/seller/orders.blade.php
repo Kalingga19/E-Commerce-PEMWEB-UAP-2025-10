@@ -117,7 +117,7 @@
                                 {{-- PROSES PESANAN --}}
                                 @if($order->payment_status === 'paid' && $order->order_status === 'pending')
                                 <form action="{{ route('seller.orders.updateStatus', $order->id) }}" 
-                                      method="POST" class="d-inline">
+                                    method="POST" class="d-inline">
                                     @csrf
                                     @method('PUT')
                                     <input type="hidden" name="order_status" value="processing">
@@ -137,6 +137,15 @@
                                 @endif
 
                             </td>
+
+                            @if($order->status === 'processing')
+                            <button class="btn btn-warning btn-sm"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#shipModal{{ $order->id }}">
+                                <i class="bi bi-truck"></i> Kirim
+                            </button>
+                            @endif
+
                         </tr>
 
                         {{-- MODAL PENGIRIMAN --}}
@@ -172,7 +181,7 @@
                                             <div class="mb-3">
                                                 <label class="form-label">Nomor Resi</label>
                                                 <input type="text" class="form-control" name="tracking_number" 
-                                                       placeholder="123456789012" required>
+                                                    placeholder="123456789012" required>
                                             </div>
 
                                             <button type="submit" class="btn btn-success w-100">
@@ -190,6 +199,40 @@
                         @endforeach
                         </tbody>
                     </table>
+                    <div class="modal fade" id="shipModal{{ $order->id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <form method="POST" action="{{ route('seller.orders.updateStatus', $order->id) }}" class="modal-content">
+                                @csrf
+                                @method('PUT')
+
+                                <input type="hidden" name="order_status" value="shipped">
+
+                                <div class="modal-header bg-warning">
+                                    <h5 class="modal-title">Konfirmasi Pengiriman</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+
+                                <div class="modal-body">
+                                    <label class="form-label">Kurir</label>
+                                    <select name="courier" class="form-select mb-3" required>
+                                        <option value="">— Pilih Kurir —</option>
+                                        <option value="jne">JNE</option>
+                                        <option value="pos">POS Indonesia</option>
+                                        <option value="tiki">TIKI</option>
+                                        <option value="sicepat">SiCepat</option>
+                                        <option value="jnt">J&T</option>
+                                    </select>
+
+                                    <label class="form-label">Nomor Resi</label>
+                                    <input type="text" name="tracking_number" class="form-control" required>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button class="btn btn-success w-100">Kirim Pesanan</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="mt-3">

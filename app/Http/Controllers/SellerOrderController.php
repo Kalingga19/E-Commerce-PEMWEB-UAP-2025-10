@@ -3,127 +3,122 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
+use App\Models\StoreBalance;
+use App\Models\StoreBalanceHistory;
 use Illuminate\Http\Request;
 
 class SellerOrderController extends Controller
 {
-    /**
-     * LIST PESANAN SELLER
-     */
+    // ============================================================== 
+    // LIST PESANAN TOKO
+    // ==============================================================
     public function index()
     {
-        $storeId = auth()->user()->store->id;
+        $store = auth()->user()->store;
 
-        $orders = Transaction::where('store_id', $storeId)
-            ->with(['buyer', 'details.product'])
-            ->orderBy('id', 'DESC')
+        $orders = Transaction::with(['transactionDetails.product'])
+            ->where('store_id', $store->id)
+            ->latest()
             ->paginate(10);
 
-        // Hitung statistik
+        // Statistik
         $stats = [
-            'waiting'   => Transaction::where('store_id', $storeId)->where('order_status', 'pending')->count(),
-            'processed' => Transaction::where('store_id', $storeId)->where('order_status', 'processing')->count(),
-            'shipped'   => Transaction::where('store_id', $storeId)->where('order_status', 'shipped')->count(),
-            'completed' => Transaction::where('store_id', $storeId)->where('order_status', 'completed')->count(),
+            'waiting'   => Transaction::where('store_id', $store->id)->where('status', 'pending')->count(),
+            'processed' => Transaction::where('store_id', $store->id)->where('status', 'processing')->count(),
+            'shipped'   => Transaction::where('store_id', $store->id)->where('status', 'shipped')->count(),
+            'completed' => Transaction::where('store_id', $store->id)->where('status', 'completed')->count(),
         ];
 
-        return view('pages.seller.orders', compact('orders', 'stats'));
+        return view('seller.orders', compact('orders', 'stats'));
     }
 
 
-
-    /**
-     * DETAIL PESANAN
-     */
+    // ============================================================== 
+    // DETAIL PESANAN
+    // ==============================================================
     public function show($id)
     {
-        $storeId = auth()->user()->store->id;
+        $store = auth()->user()->store;
 
-        $order = Transaction::where('store_id', $storeId)
-            ->with(['buyer', 'details.product'])
+        $order = Transaction::with(['transactionDetails.product.images'])
+            ->where('store_id', $store->id)
             ->findOrFail($id);
 
-        return view('pages.seller.order-detail', compact('order'));
+        return view('seller.order-detail', compact('order'));
     }
 
 
-
-    /**
-     * UPDATE STATUS PESANAN (processing / shipped / completed / cancelled)
-     */
+    // ============================================================== 
+    // UPDATE STATUS PESANAN (processing → shipped → completed)
+    // ==============================================================
     public function updateStatus(Request $request, $id)
     {
-        $storeId = auth()->user()->store->id;
+        $store = auth()->user()->store;
 
-        $order = Transaction::where('store_id', $storeId)->findOrFail($id);
+        $order = Transaction::where('store_id', $store->id)->findOrFail($id);
 
-        // Validasi status
         $request->validate([
-            'order_status' => 'required|in:processing,shipped,completed,cancelled',
-            'courier' => 'nullable|string',
+            'order_status' => 'required',
+            'courier'      => 'nullable|string',
             'tracking_number' => 'nullable|string',
         ]);
 
-        // LOGIC STATUS
+        // ==== IF SELLER PROCESSES THE ORDER =====
         if ($request->order_status === 'processing') {
-
-            // Dari pending → processing
             if ($order->payment_status !== 'paid') {
-                return back()->with('error', 'Tidak bisa memproses pesanan yang belum dibayar.');
+                return back()->with('error', 'Pesanan belum dibayar.');
             }
 
-            $order->order_status = 'processing';
+            $order->status = 'processing';
+            $order->save();
+
+            return back()->with('success', 'Pesanan berhasil diproses.');
         }
 
+        // ==== IF SELLER SHIPS THE ORDER ====
         if ($request->order_status === 'shipped') {
 
-            // Validasi pengiriman
             if (!$request->courier || !$request->tracking_number) {
-                return back()->with('error', 'Kurir dan nomor resi wajib diisi.');
+                return back()->with('error', 'Kurir & Nomor resi harus diisi.');
             }
 
-            $order->order_status = 'shipped';
-            $order->shipping = $request->courier;
+            $order->status = 'shipped';
+            $order->courier = $request->courier;
             $order->tracking_number = $request->tracking_number;
+            $order->shipped_at = now();
+            $order->save();
+
+            return back()->with('success', 'Pesanan berhasil dikirim.');
         }
 
+        // ==== COMPLETE ORDER (optional if seller) ====
         if ($request->order_status === 'completed') {
 
-            // Jangan double payout
-            if ($order->payout_status === 'paid') {
-                return back()->with('error', 'Saldo pesanan ini sudah pernah dibayarkan.');
-            }
+            $order->status = 'completed';
+            $order->completed_at = now();
+            $order->save();
 
-            $order->order_status = 'completed';
-            $order->payout_status = 'paid';
-
-            // Ambil saldo toko
-            $balance = \App\Models\StoreBalance::firstOrCreate(
-                ['store_id' => $order->store_id],
+            // Tambahkan pendapatan ke saldo toko
+            $balance = StoreBalance::firstOrCreate(
+                ['store_id' => $store->id],
                 ['balance' => 0]
             );
 
-            // Tambah saldo seller
             $balance->balance += $order->grand_total;
             $balance->save();
 
-            // Catat histori saldo
-            \App\Models\StoreBalanceHistory::create([
+            StoreBalanceHistory::create([
                 'store_balance_id' => $balance->id,
                 'type' => 'income',
                 'reference_id' => $order->id,
                 'reference_type' => 'transaction',
                 'amount' => $order->grand_total,
-                'remarks' => 'Pendapatan dari pesanan #' . $order->id
+                'remarks' => 'Pendapatan transaksi #' . $order->id
             ]);
+
+            return back()->with('success', 'Pesanan selesai & saldo toko bertambah.');
         }
 
-        if ($request->order_status === 'cancelled') {
-            $order->order_status = 'cancelled';
-        }
-
-        $order->save();
-
-        return back()->with('success', 'Status pesanan berhasil diperbarui.');
+        return back()->with('error', 'Status tidak valid.');
     }
 }

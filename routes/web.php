@@ -7,6 +7,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProfileDashboardController;
+use App\Http\Controllers\CustomerOrderController;
 
 // Controllers Payment & Wallet
 use App\Http\Controllers\CheckoutController;
@@ -20,6 +21,15 @@ use App\Http\Controllers\SellerProductController;
 Route::get('/', [ProductController::class, 'index'])->name('home');
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/product/{slug}', [ProductController::class, 'show'])->name('products.show');
+
+// Homepage
+Route::get('/', [\App\Http\Controllers\HomeController::class, 'index'])
+    ->name('home');
+
+// Category page
+Route::get('/category/{slug}', [\App\Http\Controllers\CategoryController::class, 'show'])
+    ->name('category.show');
+
 
 Route::middleware(['auth'])->group(function () {
 
@@ -48,15 +58,50 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
 
-    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-    Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
-    Route::post('/cart/{id}/update', [CartController::class, 'update'])->name('cart.update');
-    Route::delete('/cart/{id}/delete', [CartController::class, 'delete'])->name('cart.delete');
+    Route::get('/cart', [\App\Http\Controllers\CartController::class, 'index'])
+        ->name('cart.index');
+
+    Route::post('/cart/add/{product_id}', [\App\Http\Controllers\CartController::class, 'add'])
+        ->name('cart.add');
+
+    Route::post('/cart/update/{item_id}', [\App\Http\Controllers\CartController::class, 'update'])
+        ->name('cart.update');
+
+    Route::delete('/cart/remove/{item_id}', [\App\Http\Controllers\CartController::class, 'remove'])
+        ->name('cart.remove');
 });
 
-Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+Route::middleware(['auth', 'admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+
+        // Dashboard
+        Route::get('/dashboard', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'index'])
+            ->name('dashboard');
+
+        // Users
+        Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])
+            ->name('users.index');
+
+        // Stores
+        Route::get('/stores', [\App\Http\Controllers\Admin\StoreController::class, 'index'])
+            ->name('stores.index');
+        Route::post('/stores/{id}/verify', [\App\Http\Controllers\Admin\StoreController::class, 'verify'])
+            ->name('stores.verify');
+
+        // Categories
+        Route::resource('categories', \App\Http\Controllers\Admin\CategoryController::class);
+
+        // Products
+        Route::get('/products', [\App\Http\Controllers\Admin\ProductController::class, 'index'])
+            ->name('products.index');
+
+        // Transactions
+        Route::get('/transactions', [\App\Http\Controllers\Admin\TransactionController::class, 'index'])
+            ->name('transactions.index');
 });
+
 
 Route::middleware(['auth', 'seller'])
     ->prefix('seller')
@@ -94,13 +139,13 @@ Route::middleware(['auth', 'seller'])
             ->name('products.destroy');
 
         // Pesanan Masuk
-        Route::get('/orders', [App\Http\Controllers\SellerOrderController::class, 'index'])
+        Route::get('/orders', [\App\Http\Controllers\SellerOrderController::class, 'index'])
             ->name('orders.index');
 
-        Route::get('/orders/{id}', [App\Http\Controllers\SellerOrderController::class, 'show'])
+        Route::get('/orders/{id}', [\App\Http\Controllers\SellerOrderController::class, 'show'])
             ->name('orders.show');
 
-        Route::put('/orders/{id}/status', [SellerOrderController::class, 'updateStatus'])
+        Route::put('/orders/{id}/status', [\App\Http\Controllers\SellerOrderController::class, 'updateStatus'])
             ->name('orders.updateStatus');
 
         // Saldo Toko
@@ -121,18 +166,21 @@ Route::middleware(['auth', 'seller'])
             ->name('profile.update');
 });
 
-// CART
-Route::get('/cart', [\App\Http\Controllers\CartController::class, 'index'])->name('cart.index');
-Route::post('/cart/add', [\App\Http\Controllers\CartController::class, 'add'])->name('cart.add');
-Route::post('/cart/update', [\App\Http\Controllers\CartController::class, 'update'])->name('cart.update');
-Route::post('/cart/remove', [\App\Http\Controllers\CartController::class, 'remove'])->name('cart.remove');
-
 Route::middleware(['auth', 'customer'])->group(function () {
     Route::get('/orders', [\App\Http\Controllers\CustomerOrderController::class, 'index'])
         ->name('customer.orders');
 
-    Route::get('/orders/{id}', [\App\Http\Controllers\CustomerOrderController::class, 'show'])
-        ->name('customer.orders.show');
+        Route::get('/orders/{id}', [\App\Http\Controllers\CustomerOrderController::class, 'detail'])
+            ->name('customer.orders.detail');
+
+        Route::post('/orders/{id}/complete', [\App\Http\Controllers\CustomerOrderController::class, 'complete'])
+            ->name('customer.orders.complete');
+
+        Route::post('/orders/{id}/review', [\App\Http\Controllers\CustomerOrderController::class, 'review'])
+            ->name('customer.orders.review');
+
+        Route::delete('/orders/{id}/cancel', [\App\Http\Controllers\CustomerOrderController::class, 'cancel'])
+            ->name('customer.orders.cancel');
 });
 
 Route::middleware(['auth'])->prefix('customer')->name('customer.')->group(function () {
