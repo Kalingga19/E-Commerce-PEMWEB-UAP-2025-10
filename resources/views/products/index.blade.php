@@ -1,11 +1,17 @@
 @foreach ($products as $product)
     <div class="product-card">
-        <img src="{{ $product->images->first()->image ?? '/default.png' }}" />
+
+        <img 
+            src="{{ asset('storage/' . ($product->images->first()->path ?? 'defaults/default.png')) }}" 
+            alt="{{ $product->name }}"
+        />
 
         <h3>{{ $product->name }}</h3>
         <p>Rp {{ number_format($product->price, 0, ',', '.') }}</p>
+
     </div>
 @endforeach
+
 <style>
     .product-card {
         border: 1px solid #ccc;
@@ -18,3 +24,4 @@
         max-width: 100%;
         height: auto;
     }
+</style>

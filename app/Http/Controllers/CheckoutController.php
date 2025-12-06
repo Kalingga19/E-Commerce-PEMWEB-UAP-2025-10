@@ -2,115 +2,135 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Cart;
 use App\Models\Product;
 use App\Models\Transaction;
 use App\Models\TransactionDetail;
-use App\Models\UserBalance;
 use App\Models\VirtualAccount;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class CheckoutController extends Controller
 {
-    public function index(Request $request)
+    /**
+     * Halaman checkout
+     */
+    public function index()
     {
-        // biasanya ada cart, tapi kita sederhanakan:
-        if (!$request->product_id) {
-            return redirect()->route('products.index')->with('error', 'Tidak ada produk yang dipilih.');
+        $user = auth()->user();
+
+        $cartItems = Cart::where('user_id', $user->id)
+                        ->with('product.store')
+                        ->get();
+
+        if ($cartItems->count() == 0) {
+            return redirect()->route('cart.index')->with('error', 'Keranjang kosong.');
         }
 
-        $product = Product::findOrFail($request->product_id);
+        $subtotal = $cartItems->sum(function ($item) {
+            return $item->quantity * $item->product->price;
+        });
 
-        return view('checkout', compact('product'));
+        return view('pages.checkout', compact('cartItems', 'subtotal'));
     }
 
-    public function store(Request $request)
+
+    /**
+     * PROSES CHECKOUT
+     */
+    public function process(Request $request)
     {
         $request->validate([
-            'product_id'      => 'required|exists:products,id',
-            'qty'             => 'required|integer|min:1',
-            'address'         => 'required|string',
-            'shipping_type'   => 'required|string',
-            'payment_method'  => 'required|in:wallet,va',
+            'receiver_name'  => 'required',
+            'address'        => 'required',
+            'city'           => 'required',
+            'postal_code'    => 'required',
+            'phone'          => 'required',
+            'payment_method' => 'required|in:wallet,va',
+            'total_amount'   => 'required|numeric',
         ]);
 
-        $product = Product::findOrFail($request->product_id);
-        $user    = Auth::user();
+        $user = auth()->user();
 
-        $shipping_cost = match ($request->shipping_type) {
-            'regular' => 10000,
-            'express' => 20000,
-            default   => 15000,
-        };
+        $cartItems = Cart::where('user_id', $user->id)->with('product')->get();
 
-        $subtotal = $product->price * $request->qty;
-        $total    = $subtotal + $shipping_cost;
+        if ($cartItems->count() == 0) {
+            return back()->with('error', 'Keranjang kosong!');
+        }
 
-        DB::beginTransaction();
+        // Ambil store ID dari produk pertama
+        $store_id = $cartItems->first()->product->store_id;
 
-        try {
-            // 1. Simpan transaksi
-            $transaction = Transaction::create([
-                'user_id'        => $user->id,
-                'store_id'       => $product->store_id,
-                'total_price'    => $total,
-                'shipping_type'  => $request->shipping_type,
-                'shipping_cost'  => $shipping_cost,
-                'address'        => $request->address,
-                'payment_method' => $request->payment_method,
-                'payment_status' => $request->payment_method === 'wallet'
-                                        ? 'paid'
-                                        : 'pending',
-                'status'         => 'waiting',
-            ]);
+        // Buat kode transaksi unik
+        $transaction_code = 'TRX-' . strtoupper(Str::random(10));
 
-            // 2. Simpan detail transaksi
+        // Buat TRANSACTION
+        $transaction = Transaction::create([
+            'code'          => $transaction_code,
+            'buyer_id'      => $user->id,
+            'store_id'      => $store_id,
+            'address'       => $request->address,
+            'address_id'    => '-',
+            'city'          => $request->city,
+            'postal_code'   => $request->postal_code,
+            'shipping'      => $request->shipping_method,
+            'shipping_type' => $request->shipping_method,
+            'shipping_cost' => $request->shipping_cost,
+            'tax'           => 0,
+            'grand_total'   => $request->total_amount,
+            'payment_status'=> 'unpaid',
+        ]);
+
+        // SIMPAN DETAIL TRANSAKSI
+        foreach ($cartItems as $item) {
             TransactionDetail::create([
                 'transaction_id' => $transaction->id,
-                'product_id'     => $product->id,
-                'qty'            => $request->qty,
-                'price'          => $product->price,
+                'product_id'     => $item->product_id,
+                'qty'            => $item->quantity,
+                'subtotal'       => $item->quantity * $item->product->price
             ]);
 
-            // 3. Jika bayar pakai wallet → potong saldo
-            if ($request->payment_method === 'wallet') {
-                $balance = UserBalance::firstOrCreate(
-                    ['user_id' => $user->id],
-                    ['balance' => 0]
-                );
+            // Kurangi stok
+            $item->product->decrement('stock', $item->quantity);
+        }
 
-                if ($balance->balance < $total) {
-                    DB::rollBack();
-                    return back()->with('error', 'Saldo Anda tidak mencukupi.');
-                }
+        // HAPUS KERANJANG
+        Cart::where('user_id', $user->id)->delete();
 
-                $balance->balance -= $total;
-                $balance->save();
 
-                DB::commit();
-                return redirect()->route('history')->with('success', 'Pembayaran berhasil memakai saldo.');
+        /**
+         * 🔥 PAYMENT METODE 1 — WALLET
+         */
+        if ($request->payment_method === 'wallet') {
+            if ($user->balance < $request->total_amount) {
+                return back()->with('error', 'Saldo tidak cukup!');
             }
 
-            // 4. Jika bayar via VA → generate kode VA
-            $va_code = "VA-" . $transaction->id . "-" . time();
+            $user->balance -= $request->total_amount;
+            $user->save();
 
-            VirtualAccount::create([
-                'transaction_id' => $transaction->id,
-                'user_id'        => $user->id,
-                'va_code'        => $va_code,
-                'amount'         => $total,
-                'status'         => 'pending',
-            ]);
+            $transaction->payment_status = 'paid';
+            $transaction->save();
 
-            DB::commit();
-
-            return redirect()->route('payment.show', ['va' => $va_code])
-                            ->with('success', 'VA berhasil dibuat.');
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return redirect()->route('history')->with('success', 'Transaksi berhasil dibayar dengan saldo!');
         }
+
+
+        /**
+         * 🔥 PAYMENT METODE 2 — VIRTUAL ACCOUNT
+         */
+        $va_code = 'PAY-' . $transaction->id . '-' . time();
+
+        VirtualAccount::create([
+            'va_code'        => $va_code,
+            'type'           => 'purchase',
+            'user_id'        => $user->id,
+            'transaction_id' => $transaction->id,
+            'amount'         => $transaction->grand_total,
+            'status'         => 'pending',
+        ]);
+
+        return redirect()->route('payment.index', ['va_code' => $va_code]);
     }
 }

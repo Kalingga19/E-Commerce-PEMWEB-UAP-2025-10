@@ -42,11 +42,12 @@ Route::middleware(['auth'])->group(function () {
 
     // Checkout
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
-    Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+    Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
 
     // Payment VA
     Route::get('/payment', [PaymentController::class, 'index'])->name('payment.index');
     Route::post('/payment/confirm', [PaymentController::class, 'confirm'])->name('payment.confirm');
+
 });
 
 Route::middleware(['auth', 'admin'])->group(function () {
@@ -116,6 +117,11 @@ Route::middleware(['auth', 'seller'])
             ->name('profile.update');
 });
 
+// CART
+Route::get('/cart', [\App\Http\Controllers\CartController::class, 'index'])->name('cart.index');
+Route::post('/cart/add', [\App\Http\Controllers\CartController::class, 'add'])->name('cart.add');
+Route::post('/cart/update', [\App\Http\Controllers\CartController::class, 'update'])->name('cart.update');
+Route::post('/cart/remove', [\App\Http\Controllers\CartController::class, 'remove'])->name('cart.remove');
 
 
 require __DIR__.'/auth.php';
