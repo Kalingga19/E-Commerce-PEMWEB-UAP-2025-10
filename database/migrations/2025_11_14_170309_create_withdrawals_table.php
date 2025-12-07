@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('withdrawals', function (Blueprint $table) {
             $table->id()->primary();
-            $table->foreignId('store_balance_id')->constrained()->cascadeOnDelete();
+            $table->foreign('store_id')->references('id')->on('stores')->onDelete('cascade');
+            $table->unsignedBigInteger('store_id');
             $table->decimal('amount', 26, 2);
             $table->string('bank_account_name');
             $table->string('bank_account_number');

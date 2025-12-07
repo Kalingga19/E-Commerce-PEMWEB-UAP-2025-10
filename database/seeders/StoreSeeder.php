@@ -22,6 +22,9 @@ class StoreSeeder extends Seeder
             'address' => 'Jl. Soekarno Hatta No.123',
             'postal_code' => '12345',
             'is_verified' => 1,
+            'bank_name' => 'BCA',
+            'bank_account_name' => 'Member Satu',
+            'bank_account_number' => '1234567890',
         ]);
     }
 }

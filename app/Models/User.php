@@ -69,4 +69,20 @@ class User extends Authenticatable
     {
         return $this->hasOne(Store::class);
     }
+
+    public function balance()
+    {
+        return $this->hasOne(UserBalance::class);
+    }
+
+    public function getBalance()
+    {
+        return $this->balance ? $this->balance->balance : 0;
+    }
+
+    public function virtualAccounts()
+    {
+        return $this->hasMany(VirtualAccount::class);
+    }
+
 }

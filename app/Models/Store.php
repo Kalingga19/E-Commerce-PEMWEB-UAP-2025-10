@@ -18,6 +18,9 @@ class Store extends Model
         'address',
         'postal_code',
         'is_verified',
+        'bank_name',
+        'bank_account_name',
+        'bank_account_number',
     ];
 
     // relationships one store has one owner (user)
