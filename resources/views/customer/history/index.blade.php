@@ -1,7 +1,4 @@
-@extends('layouts.app')
-
-@section('content')
-
+<x-app-layout>
 <h2 class="text-xl font-bold mb-4">Riwayat Transaksi</h2>
 
 @foreach($transactions as $trx)
@@ -18,5 +15,4 @@
     </ul>
 </div>
 @endforeach
-
-@endsection
+</x-app-layout>

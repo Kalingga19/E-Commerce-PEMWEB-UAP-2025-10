@@ -1,6 +1,4 @@
-@extends('layouts.app')
-
-@section('content')
+<x-app-layout>
 
 <h2 class="text-2xl font-bold mb-4">Kategori Produk</h2>
 
@@ -36,5 +34,4 @@
     </tbody>
 
 </table>
-
-@endsection
+</x-app-layout>

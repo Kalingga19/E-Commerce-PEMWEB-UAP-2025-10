@@ -1,6 +1,4 @@
-@extends('layouts.app')
-
-@section('content')
+<x-app-layout>
 <h2 class="text-2xl font-bold mb-4">Manajemen User</h2>
 
 <table class="w-full bg-white rounded shadow overflow-hidden">
@@ -41,5 +39,4 @@
     </tbody>
 
 </table>
-
-@endsection
+</x-app-layout>

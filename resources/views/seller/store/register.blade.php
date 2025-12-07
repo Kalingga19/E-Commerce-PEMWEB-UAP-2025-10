@@ -1,7 +1,4 @@
-@extends('layouts.app')
-
-@section('content')
-
+<x-app-layout>
 <h2 class="text-2xl font-bold mb-4">Daftarkan Toko Baru</h2>
 
 <form action="{{ route('store.register.store') }}" method="POST">
@@ -21,5 +18,4 @@
 
     <button class="bg-blue-600 text-white px-4 py-2 rounded">Daftar Toko</button>
 </form>
-
-@endsection
+</x-app-layout>

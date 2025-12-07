@@ -1,6 +1,4 @@
-@extends('layouts.app')
-
-@section('content')
+<x-app-layout>
 
 <div class="py-6 grid grid-cols-2 gap-6">
     <div>
@@ -36,5 +34,4 @@
         </form>
     </div>
 </div>
-
-@endsection
+</x-app-layout>

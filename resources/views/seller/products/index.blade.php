@@ -1,6 +1,4 @@
-@extends('layouts.app')
-
-@section('content')
+<x-app-layout>
 <h2 class="text-xl font-bold mb-4">Manajemen Produk</h2>
 
 <a href="{{ route('seller.products.create') }}" 
@@ -37,5 +35,4 @@
         @endforeach
     </tbody>
 </table>
-
-@endsection
+</x-app-layout>

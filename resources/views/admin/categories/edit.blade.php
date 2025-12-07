@@ -1,7 +1,4 @@
-@extends('layouts.app')
-
-@section('content')
-
+<x-app-layout>
 <h2 class="text-xl font-bold mb-4">Edit Kategori</h2>
 
 <form method="POST" action="{{ route('admin.categories.update', $category) }}">
@@ -23,5 +20,4 @@
 <button class="bg-green-600 text-white px-4 py-2 rounded">Update</button>
 
 </form>
-
-@endsection
+</x-app-layout>

@@ -22,6 +22,23 @@ use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/dashboard', function () {
+    $user = auth()->user();
+
+    // Admin → redirect ke halaman admin
+    if ($user->role === 'admin') {
+        return redirect()->route('admin.dashboard');
+    }
+
+    // Seller (member yang punya toko & verified)
+    if ($user->role === 'member' && $user->store && $user->store->is_verified) {
+        return redirect()->route('seller.dashboard');
+    }
+
+    // Member biasa (customer)
+    return redirect()->route('home'); // ke homepage
+})->middleware(['auth'])->name('dashboard');
+
 
 // Detail produk
 Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.show');

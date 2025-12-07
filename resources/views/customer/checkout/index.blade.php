@@ -1,7 +1,4 @@
-@extends('layouts.app')
-
-@section('content')
-
+<x-app-layout>
 <h2 class="text-2xl font-bold mb-4">Checkout</h2>
 
 <form method="POST" action="/checkout">
@@ -31,5 +28,4 @@
 </div>
 
 </form>
-
-@endsection
+</x-app-layout>

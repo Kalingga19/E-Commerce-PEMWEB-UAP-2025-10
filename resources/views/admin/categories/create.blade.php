@@ -1,7 +1,4 @@
-@extends('layouts.app')
-
-@section('content')
-
+<x-app-layout>
 <h2 class="text-xl font-bold mb-4">Tambah Kategori</h2>
 
 <form method="POST" action="{{ route('admin.categories.store') }}">
@@ -22,5 +19,4 @@
 <button class="bg-green-600 text-white px-4 py-2 rounded">Simpan</button>
 
 </form>
-
-@endsection
+</x-app-layout>

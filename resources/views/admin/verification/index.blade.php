@@ -1,6 +1,4 @@
-@extends('layouts.app')
-
-@section('content')
+<x-app-layout>
 <h2 class="text-2xl font-bold mb-4">Verifikasi Toko</h2>
 
 @if($stores->isEmpty())
@@ -34,5 +32,4 @@
     </div>
 </div>
 @endforeach
-
-@endsection
+</x-app-layout>

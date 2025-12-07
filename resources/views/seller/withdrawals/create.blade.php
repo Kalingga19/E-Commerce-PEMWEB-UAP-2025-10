@@ -1,6 +1,4 @@
-@extends('layouts.app')
-
-@section('content')
+<x-app-layout>
 
 <h2 class="text-xl font-bold mb-4">Ajukan Penarikan Dana</h2>
 
@@ -15,5 +13,4 @@
 </button>
 
 </form>
-
-@endsection
+</x-app-layout>

@@ -1,7 +1,4 @@
-@extends('layouts.app')
-
-@section('content')
-
+<x-app-layout>
 <h2 class="text-xl font-bold mb-4">Riwayat Penarikan Dana</h2>
 
 <a href="{{ route('seller.withdrawals.create') }}" 
@@ -15,5 +12,4 @@
     <p>Status: {{ $w->status }}</p>
 </div>
 @endforeach
-
-@endsection
+</x-app-layout>

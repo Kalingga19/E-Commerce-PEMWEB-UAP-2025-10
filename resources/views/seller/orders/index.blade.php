@@ -1,7 +1,4 @@
-@extends('layouts.app')
-
-@section('content')
-
+<x-app-layout>
 <h2 class="text-xl font-bold mb-4">Daftar Pesanan Masuk</h2>
 
 @foreach($orders as $order)
@@ -17,5 +14,4 @@
     <a href="{{ route('seller.orders.show', $order) }}" class="text-blue-600">Detail</a>
 </div>
 @endforeach
-
-@endsection
+</x-app-layout>

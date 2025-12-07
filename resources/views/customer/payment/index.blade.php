@@ -1,6 +1,4 @@
-@extends('layouts.app')
-
-@section('content')
+<x-app-layout>
 
 <h2 class="text-xl font-bold mb-4">Konfirmasi Pembayaran</h2>
 
@@ -11,5 +9,4 @@
 
     <button class="bg-green-600 text-white px-4 py-2 rounded">Konfirmasi</button>
 </form>
-
-@endsection
+</x-app-layout>

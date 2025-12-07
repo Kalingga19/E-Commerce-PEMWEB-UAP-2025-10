@@ -1,6 +1,4 @@
-@extends('layouts.app')
-
-@section('content')
+<x-app-layout>
 
 <h2 class="text-xl font-bold mb-4">Saldo Toko</h2>
 
@@ -19,5 +17,4 @@
     <p>Ref: {{ $h->reference_id }} ({{ $h->reference_type }})</p>
 </div>
 @endforeach
-
-@endsection
+</x-app-layout>
