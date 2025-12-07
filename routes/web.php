@@ -1,48 +1,88 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Member\ProductController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+use App\Http\Controllers\Member\CheckoutController;
+use App\Http\Controllers\Member\HistoryController;
+use App\Http\Controllers\Member\WalletController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\Seller\StoreRegistrationController;
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+use App\Http\Controllers\Seller\DashboardController;
+use App\Http\Controllers\Seller\ProductController as SellerProductController;
+use App\Http\Controllers\Seller\CategoryController as SellerCategoryController;
+use App\Http\Controllers\Seller\OrderController;
+use App\Http\Controllers\Seller\BalanceController;
+use App\Http\Controllers\Seller\WithdrawalController;
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\StoreVerificationController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 
-Route::middleware(['admin'])->group(function () {
-    Route::get('/admin/dashboard', [AdminDashboardController::class, 'index']);
-    Route::resource('/admin/categories', AdminCategoryController::class);
-    Route::resource('/admin/users', AdminUserController::class);
-    Route::get('/admin/verification', [StoreVerificationController::class, 'index']);
-});
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::middleware(['seller'])->group(function () {
-    Route::get('/seller/dashboard', [SellerDashboardController::class, 'index']);
-    Route::resource('/seller/products', SellerProductController::class);
-    Route::resource('/seller/categories', SellerCategoryController::class);
-    Route::resource('/seller/orders', SellerOrderController::class);
-    Route::resource('/seller/withdrawals', SellerWithdrawalController::class);
-});
+// Detail produk
+Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.show');
 
-Route::middleware(['member'])->group(function () {
-    Route::get('/checkout', [CheckoutController::class, 'index']);
+Route::middleware(['auth', 'member'])->group(function () {
+
+    // Register Store (khusus member)
+    Route::get('/store/register', [StoreRegistrationController::class, 'create'])->name('store.register');
+    Route::post('/store/register', [StoreRegistrationController::class, 'store'])->name('store.register.store');
+
+    // Checkout
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
     Route::post('/checkout', [CheckoutController::class, 'store']);
-    Route::get('/history', [HistoryController::class, 'index']);
-    Route::get('/wallet/topup', [WalletController::class, 'create']);
-    Route::post('/wallet/topup', [WalletController::class, 'store']);
+
+    // History transaksi
+    Route::get('/history', [HistoryController::class, 'index'])->name('history');
+
+    // Wallet Topup
+    Route::get('/wallet/topup', [WalletController::class, 'create'])->name('wallet.topup');
+    Route::post('/wallet/topup', [WalletController::class, 'store'])->name('wallet.topup.store');
+
+    // PAYMENT PAGE (untuk topup & checkout)
+    Route::get('/payment', [PaymentController::class, 'index'])->name('payment');
+    Route::post('/payment', [PaymentController::class, 'process'])->name('payment.process');
 });
 
-Route::middleware(['member'])->group(function () {
-    Route::get('/store/register', [StoreRegistrationController::class, 'create']);
-    Route::post('/store/register', [StoreRegistrationController::class, 'store']);
+Route::middleware(['auth', 'seller'])->prefix('seller')->name('seller.')->group(function () {
+
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Produk
+    Route::resource('/products', SellerProductController::class);
+
+    // Kategori (seller)
+    Route::resource('/categories', SellerCategoryController::class);
+
+    // Pesanan
+    Route::resource('/orders', OrderController::class);
+
+    // Saldo toko
+    Route::get('/balance', [BalanceController::class, 'index'])->name('balance');
+
+    // Withdrawals
+    Route::resource('/withdrawals', WithdrawalController::class);
+});
+
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+    // Verifikasi toko
+    Route::get('/verification', [StoreVerificationController::class, 'index'])->name('verification');
+    Route::post('/verification/{store}/approve', [StoreVerificationController::class, 'approve'])->name('verification.approve');
+    Route::post('/verification/{store}/reject', [StoreVerificationController::class, 'reject'])->name('verification.reject');
+
+    // Manajemen user
+    Route::resource('/users', AdminUserController::class);
+
+    // Manajemen kategori global
+    Route::resource('/categories', AdminCategoryController::class);
 });
 
 require __DIR__.'/auth.php';

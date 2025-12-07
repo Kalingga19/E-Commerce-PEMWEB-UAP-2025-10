@@ -7,14 +7,16 @@ use App\Models\Product;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function show($slug)
     {
-        $products = Product::with('productImages')->paginate(20);
-        return view('member.products.index', compact('products'));
-    }
+        $product = Product::with([
+                'productImages',
+                'store',
+                'productReviews'
+            ])
+            ->where('slug', $slug)
+            ->firstOrFail();
 
-    public function show(Product $product)
-    {
-        return view('member.products.show', compact('product'));
+        return view('customer.product.show', compact('product'));
     }
 }
