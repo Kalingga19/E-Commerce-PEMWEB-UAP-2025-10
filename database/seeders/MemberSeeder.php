@@ -14,7 +14,7 @@ class MemberSeeder extends Seeder
         $member1 = User::create([
             'name' => 'Member Satu',
             'email' => 'member1@example.com',
-            'password' => Hash::make('password'),
+            'password' => 'member1',
             'role' => 'member',
         ]);
 
@@ -22,7 +22,7 @@ class MemberSeeder extends Seeder
         User::create([
             'name' => 'Member Dua',
             'email' => 'member2@example.com',
-            'password' => Hash::make('password'),
+            'password' => 'member2',
             'role' => 'member',
         ]);
 
