@@ -12,9 +12,8 @@ use App\Http\Controllers\Seller\StoreRegistrationController;
 
 use App\Http\Controllers\Seller\DashboardController;
 use App\Http\Controllers\Seller\ProductController as SellerProductController;
-use App\Http\Controllers\Seller\CategoryController as SellerCategoryController;
 use App\Http\Controllers\Seller\OrderController;
-use App\Http\Controllers\Seller\BalanceController;
+use App\Http\Controllers\Seller\BallanceController;
 use App\Http\Controllers\Seller\WithdrawalController;
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
@@ -56,14 +55,11 @@ Route::middleware(['auth', 'seller'])->prefix('seller')->name('seller.')->group(
     // Produk
     Route::resource('/products', SellerProductController::class);
 
-    // Kategori (seller)
-    Route::resource('/categories', SellerCategoryController::class);
-
     // Pesanan
     Route::resource('/orders', OrderController::class);
 
     // Saldo toko
-    Route::get('/balance', [BalanceController::class, 'index'])->name('balance');
+    Route::get('/balance', [BallanceController::class, 'index'])->name('balance');
 
     // Withdrawals
     Route::resource('/withdrawals', WithdrawalController::class);

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Seller;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
-class BalanceController extends Controller
+class BallanceController extends Controller
 {
     public function index()
     {
