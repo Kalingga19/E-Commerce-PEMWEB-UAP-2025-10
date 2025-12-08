@@ -34,12 +34,12 @@
             <div class="bg-white rounded-2xl shadow-xl p-6 mb-6">
                 <h2 class="text-lg font-semibold text-gray-800 mb-4">Produk Dipesan</h2>
 
-                @foreach($transaction->transactionDetails as $item)
+                @foreach(($transaction->details ?? []) as $detail)
                 <div class="flex items-center mb-4 p-4 bg-gray-50 rounded-xl">
                     
                     <div class="w-20 h-20 bg-gray-200 rounded-xl overflow-hidden mr-4">
-                        @if($item->product->productImages->first())
-                            <img src="{{ asset('storage/'.$item->product->productImages->first()->image) }}"
+                        @if($detail->product->productImages->first())
+                            <img src="{{ asset('storage/'.$detail->product->productImages->first()->image) }}"
                                 class="w-full h-full object-cover">
                         @else
                             <div class="flex items-center justify-center w-full h-full text-gray-400">No Image</div>
@@ -47,12 +47,12 @@
                     </div>
 
                     <div class="flex-1">
-                        <h3 class="font-medium text-gray-800">{{ $item->product->name }}</h3>
-                        <p class="text-sm text-gray-500">Jumlah: x{{ $item->qty }}</p>
+                        <h3 class="font-medium text-gray-800">{{ $detail->product->name }}</h3>
+                        <p class="text-sm text-gray-500">Jumlah: x{{ $detail->qty }}</p>
                     </div>
 
                     <div class="font-bold text-gray-900">
-                        Rp {{ number_format($item->price * $item->qty, 0, ',', '.') }}
+                        Rp {{ number_format($detail->price * $detail->qty, 0, ',', '.') }}
                     </div>
                 </div>
                 @endforeach

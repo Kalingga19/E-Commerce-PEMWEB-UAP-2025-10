@@ -25,11 +25,9 @@ class CartController extends Controller
 
         $cart = session()->get('cart', []);
 
-        // Jika produk sudah ada, tambahkan qty
         if (isset($cart[$product->id])) {
             $cart[$product->id]['qty'] += $request->qty;
         } else {
-            // Tambahkan item baru
             $cart[$product->id] = [
                 'product_id' => $product->id,
                 'name'       => $product->name,
@@ -41,17 +39,41 @@ class CartController extends Controller
 
         session()->put('cart', $cart);
 
-        return redirect()->route('cart.index')->with('success', 'Produk berhasil ditambahkan ke keranjang!');
+        return redirect()->route('cart.index')->with('success', 'Produk berhasil ditambahkan!');
     }
 
-    public function remove(Request $request)
+    public function remove($id)
     {
         $cart = session()->get('cart', []);
-
-        unset($cart[$request->product_id]);
+        unset($cart[$id]);
 
         session()->put('cart', $cart);
 
-        return back()->with('success', 'Item dihapus dari keranjang!');
+        return back()->with('success', 'Produk dihapus dari keranjang.');
     }
+
+    public function clear()
+    {
+        session()->forget('cart');
+
+        return back()->with('success', 'Keranjang dikosongkan.');
+    }
+
+    public function updateQty(Request $request, $id)
+    {
+        $cart = session()->get('cart', []);
+
+        if (!isset($cart[$id])) {
+            return back()->with('error', 'Produk tidak ditemukan di keranjang.');
+        }
+
+        $qty = max(1, (int)$request->qty);
+
+        $cart[$id]['qty'] = $qty;
+
+        session()->put('cart', $cart);
+
+        return back()->with('success', 'Jumlah produk diperbarui.');
+    }
+
 }

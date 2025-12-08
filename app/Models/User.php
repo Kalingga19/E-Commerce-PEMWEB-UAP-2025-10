@@ -85,4 +85,19 @@ class User extends Authenticatable
         return $this->hasMany(VirtualAccount::class);
     }
 
+    public function transactions()
+    {
+        return $this->hasMany(\App\Models\Transaction::class, 'buyer_id');
+    }
+    
+    public function cartItems()
+    {
+        return $this->hasMany(CartItem::class);
+    }
+
+    public function cart()
+    {
+        return $this->hasOne(\App\Models\Cart::class);
+    }
+
 }

@@ -32,7 +32,9 @@
                 <div class="bg-white rounded-xl shadow-sm p-4 mb-6">
                     <div class="flex items-center justify-between">
                         <div class="text-sm text-gray-600">
-                            <span class="font-medium text-gray-800">Pesanan #ORD-{{ date('Ymd') }}-{{ rand(1000, 9999) }}</span>
+                            <span class="font-medium text-gray-800">
+                                Pesanan #ORD-{{ date('Ymd') }}-{{ rand(1000, 9999) }}
+                            </span>
                             • Tanggal: {{ date('d M Y') }}
                         </div>
                         <div class="flex items-center">
@@ -47,7 +49,15 @@
 
             <form method="POST" action="/checkout" class="space-y-8">
                 @csrf
-                
+                <!-- hidden product & qty -->
+                @if(isset($product))
+                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+                    <input type="hidden" name="qty" value="{{ $qty }}">
+                @endif
+                @if(isset($cart))
+                    <input type="hidden" name="cart_mode" value="1">
+                @endif
+
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <!-- Left Column - Shipping Address -->
                     <div class="lg:col-span-2 space-y-8">
@@ -62,7 +72,7 @@
                                     Alamat Pengiriman
                                 </h3>
                             </div>
-                            
+
                             <div class="p-6">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <!-- Address Field -->
@@ -78,8 +88,8 @@
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                                 </svg>
                                             </div>
-                                            <input type="text" 
-                                                   name="address" 
+                                            <input type="text"
+                                                   name="address"
                                                    class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
                                                    placeholder="Contoh: Jl. Sudirman No. 123, RT 01/RW 02"
                                                    required>
@@ -98,8 +108,8 @@
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                                                 </svg>
                                             </div>
-                                            <input type="text" 
-                                                   name="city" 
+                                            <input type="text"
+                                                   name="city"
                                                    class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
                                                    placeholder="Contoh: Jakarta Selatan"
                                                    required>
@@ -118,8 +128,8 @@
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path>
                                                 </svg>
                                             </div>
-                                            <input type="text" 
-                                                   name="postal_code" 
+                                            <input type="text"
+                                                   name="postal_code"
                                                    class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
                                                    placeholder="Contoh: 12190"
                                                    required>
@@ -132,19 +142,16 @@
                                     <h4 class="text-sm font-medium text-gray-700 mb-4">Jenis Pengiriman</h4>
                                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                         <div class="relative">
-                                            <input type="radio" 
-                                                   name="shipping_type" 
-                                                   id="shipping_reg" 
-                                                   value="REG" 
+                                            <input type="radio"
+                                                   name="shipping_type"
+                                                   id="shipping_reg"
+                                                   value="REG"
                                                    class="sr-only"
                                                    checked>
-                                            <label for="shipping_reg" 
-                                                   class="flex flex-col p-4 border-2 border-gray-300 rounded-xl cursor-pointer hover:border-blue-500 transition duration-200 peer-checked:border-blue-500 peer-checked:bg-blue-50">
+                                            <label for="shipping_reg"
+                                                   class="flex flex-col p-4 border-2 border-gray-300 rounded-xl cursor-pointer hover:border-blue-500 transition duration-200">
                                                 <div class="flex items-center justify-between">
                                                     <span class="font-medium text-gray-800">REG</span>
-                                                    <svg class="w-5 h-5 text-blue-600 hidden peer-checked:block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                                    </svg>
                                                 </div>
                                                 <span class="text-sm text-gray-600 mt-1">Reguler</span>
                                                 <span class="text-lg font-bold text-blue-600 mt-2">Rp 20.000</span>
@@ -152,18 +159,15 @@
                                         </div>
 
                                         <div class="relative">
-                                            <input type="radio" 
-                                                   name="shipping_type" 
-                                                   id="shipping_exp" 
-                                                   value="EXP" 
+                                            <input type="radio"
+                                                   name="shipping_type"
+                                                   id="shipping_exp"
+                                                   value="EXP"
                                                    class="sr-only">
-                                            <label for="shipping_exp" 
-                                                   class="flex flex-col p-4 border-2 border-gray-300 rounded-xl cursor-pointer hover:border-blue-500 transition duration-200 peer-checked:border-blue-500 peer-checked:bg-blue-50">
+                                            <label for="shipping_exp"
+                                                   class="flex flex-col p-4 border-2 border-gray-300 rounded-xl cursor-pointer hover:border-blue-500 transition duration-200">
                                                 <div class="flex items-center justify-between">
                                                     <span class="font-medium text-gray-800">EXP</span>
-                                                    <svg class="w-5 h-5 text-blue-600 hidden peer-checked:block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                                    </svg>
                                                 </div>
                                                 <span class="text-sm text-gray-600 mt-1">Express</span>
                                                 <span class="text-lg font-bold text-blue-600 mt-2">Rp 35.000</span>
@@ -171,18 +175,15 @@
                                         </div>
 
                                         <div class="relative">
-                                            <input type="radio" 
-                                                   name="shipping_type" 
-                                                   id="shipping_sds" 
-                                                   value="SDS" 
+                                            <input type="radio"
+                                                   name="shipping_type"
+                                                   id="shipping_sds"
+                                                   value="SDS"
                                                    class="sr-only">
-                                            <label for="shipping_sds" 
-                                                   class="flex flex-col p-4 border-2 border-gray-300 rounded-xl cursor-pointer hover:border-blue-500 transition duration-200 peer-checked:border-blue-500 peer-checked:bg-blue-50">
+                                            <label for="shipping_sds"
+                                                   class="flex flex-col p-4 border-2 border-gray-300 rounded-xl cursor-pointer hover:border-blue-500 transition duration-200">
                                                 <div class="flex items-center justify-between">
                                                     <span class="font-medium text-gray-800">SDS</span>
-                                                    <svg class="w-5 h-5 text-blue-600 hidden peer-checked:block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                                    </svg>
                                                 </div>
                                                 <span class="text-sm text-gray-600 mt-1">Same Day</span>
                                                 <span class="text-lg font-bold text-blue-600 mt-2">Rp 50.000</span>
@@ -194,7 +195,8 @@
                         </div>
 
                         <!-- Hidden inputs -->
-                        <input type="hidden" name="shipping_cost" value="20000">
+                        <input type="hidden" name="shipping_cost" id="shipping_cost_input" value="20000">
+                        <input type="hidden" name="service_fee" id="service_fee_input" value="5000">
 
                         <!-- Order Summary -->
                         <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
@@ -207,23 +209,72 @@
                                 </h3>
                             </div>
                             <div class="p-6">
-                                <div class="space-y-4">
+
+                            <!-- Ringkasan Produk -->
+                            @if($product)
+                                {{-- MODE BUY NOW --}}
+                                <div class="flex items-center mb-4">
+                                    <div class="w-16 h-16 bg-gray-100 rounded-lg mr-4">
+                                        <img src="{{ asset('storage/' . $product->productImages->first()->image) }}" class="w-full h-full object-cover">
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium">{{ $product->name }}</h4>
+                                        <p class="text-sm text-gray-500">
+                                            Qty: {{ $qty }} • Harga: Rp {{ number_format($product->price) }}
+                                        </p>
+                                    </div>
+                                </div>
+                            @elseif($cart)
+                                {{-- MODE CHECKOUT DARI CART --}}
+                                @foreach($cart as $item)
+                                    <div class="flex items-center mb-4">
+                                        <div class="w-16 h-16 bg-gray-100 rounded-lg mr-4"></div>
+                                        <div>
+                                            <h4 class="font-medium">{{ $item->product->name }}</h4>
+                                            <p class="text-sm text-gray-500">
+                                                Qty: {{ $item->qty }} • Harga: Rp {{ number_format($item->product->price) }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            @endif
+
+                            @php
+                                if (isset($product)) {
+                                    // Mode Buy Now
+                                    $totalProduk = $subtotal;
+                                } else {
+                                    // Mode Cart
+                                    $totalProduk = array_sum(
+                                        array_map(fn($i) => $i->product->price * $i->qty, $cart->toArray())
+                                    );
+                                }
+                            @endphp
+                                <div class="space-y-4 mt-4">
                                     <div class="flex justify-between items-center">
                                         <span class="text-gray-600">Subtotal Produk</span>
-                                        <span class="font-medium text-gray-800">Rp 850.000</span>
+                                        <span class="font-medium text-gray-800" id="subtotal_text">
+                                            Rp {{ number_format($subtotal, 0, ',', '.') }}
+                                        </span>
                                     </div>
                                     <div class="flex justify-between items-center">
                                         <span class="text-gray-600">Biaya Pengiriman</span>
-                                        <span class="font-medium text-gray-800">Rp 20.000</span>
+                                        <span class="font-medium text-gray-800" id="shipping_text">
+                                            Rp 20.000
+                                        </span>
                                     </div>
                                     <div class="flex justify-between items-center">
                                         <span class="text-gray-600">Biaya Layanan</span>
-                                        <span class="font-medium text-gray-800">Rp 5.000</span>
+                                        <span class="font-medium text-gray-800" id="service_text">
+                                            Rp 5.000
+                                        </span>
                                     </div>
                                     <div class="border-t pt-4">
                                         <div class="flex justify-between items-center">
                                             <span class="text-lg font-bold text-gray-800">Total Pembayaran</span>
-                                            <span class="text-2xl font-bold text-green-600">Rp 875.000</span>
+                                            <span class="text-2xl font-bold text-green-600" id="total_text">
+                                                Rp {{ number_format($subtotal + 20000 + 5000, 0, ',', '.') }}
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -243,19 +294,14 @@
                                     Metode Pembayaran
                                 </h3>
                             </div>
-                            
+
                             <div class="p-6">
                                 <div class="space-y-4">
                                     <!-- Wallet Option -->
                                     <div class="relative">
-                                        <input type="radio" 
-                                               name="payment_method" 
-                                               id="wallet" 
-                                               value="wallet" 
-                                               class="sr-only"
-                                               checked>
-                                        <label for="wallet" 
-                                               class="flex items-center p-4 border-2 border-gray-300 rounded-xl cursor-pointer hover:border-purple-500 transition duration-200 peer-checked:border-purple-500 peer-checked:bg-purple-50">
+                                        <input type="radio" name="payment_method" id="wallet" value="wallet" class="peer sr-only">
+                                        <label for="wallet"
+                                            class="flex items-center p-4 border-2 border-gray-300 rounded-xl cursor-pointer hover:border-purple-500 transition duration-200">
                                             <div class="flex-shrink-0 mr-4">
                                                 <div class="w-12 h-12 bg-gradient-to-r from-green-100 to-emerald-100 rounded-xl flex items-center justify-center">
                                                     <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -266,24 +312,26 @@
                                             <div class="flex-1">
                                                 <div class="flex items-center justify-between">
                                                     <span class="font-medium text-gray-800">Saldo Dompet</span>
-                                                    <svg class="w-5 h-5 text-purple-600 hidden peer-checked:block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                                    </svg>
                                                 </div>
-                                                <p class="text-sm text-gray-600 mt-1">Saldo tersedia: <span class="font-bold text-green-600">Rp 1.250.000</span></p>
+                                                <p class="text-sm text-gray-600 mt-1">
+                                                    Saldo tersedia:
+                                                    <span class="font-bold text-green-600">
+                                                        Rp {{ number_format($balance, 0, ',', '.') }}
+                                                    </span>
+                                                </p>
                                             </div>
                                         </label>
                                     </div>
 
                                     <!-- Virtual Account Option -->
                                     <div class="relative">
-                                        <input type="radio" 
-                                               name="payment_method" 
-                                               id="va" 
-                                               value="va" 
-                                               class="sr-only">
-                                        <label for="va" 
-                                               class="flex items-center p-4 border-2 border-gray-300 rounded-xl cursor-pointer hover:border-purple-500 transition duration-200 peer-checked:border-purple-500 peer-checked:bg-purple-50">
+                                        <input type="radio"
+                                            name="payment_method"
+                                            id="va"
+                                            value="va"
+                                            class="sr-only">
+                                        <label for="va"
+                                            class="flex items-center p-4 border-2 border-gray-300 rounded-xl cursor-pointer hover:border-purple-500 transition duration-200">
                                             <div class="flex-shrink-0 mr-4">
                                                 <div class="w-12 h-12 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-xl flex items-center justify-center">
                                                     <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -294,9 +342,6 @@
                                             <div class="flex-1">
                                                 <div class="flex items-center justify-between">
                                                     <span class="font-medium text-gray-800">Virtual Account</span>
-                                                    <svg class="w-5 h-5 text-purple-600 hidden peer-checked:block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                                    </svg>
                                                 </div>
                                                 <p class="text-sm text-gray-600 mt-1">Transfer via BCA, Mandiri, BRI, dll.</p>
                                             </div>
@@ -305,13 +350,13 @@
 
                                     <!-- QRIS Option -->
                                     <div class="relative">
-                                        <input type="radio" 
-                                               name="payment_method" 
-                                               id="qris" 
-                                               value="qris" 
-                                               class="sr-only">
-                                        <label for="qris" 
-                                               class="flex items-center p-4 border-2 border-gray-300 rounded-xl cursor-pointer hover:border-purple-500 transition duration-200 peer-checked:border-purple-500 peer-checked:bg-purple-50">
+                                        <input type="radio"
+                                            name="payment_method"
+                                            id="qris"
+                                            value="qris"
+                                            class="sr-only">
+                                        <label for="qris"
+                                            class="flex items-center p-4 border-2 border-gray-300 rounded-xl cursor-pointer hover:border-purple-500 transition duration-200">
                                             <div class="flex-shrink-0 mr-4">
                                                 <div class="w-12 h-12 bg-gradient-to-r from-yellow-100 to-orange-100 rounded-xl flex items-center justify-center">
                                                     <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -322,9 +367,6 @@
                                             <div class="flex-1">
                                                 <div class="flex items-center justify-between">
                                                     <span class="font-medium text-gray-800">QRIS</span>
-                                                    <svg class="w-5 h-5 text-purple-600 hidden peer-checked:block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                                    </svg>
                                                 </div>
                                                 <p class="text-sm text-gray-600 mt-1">Scan QR Code untuk pembayaran</p>
                                             </div>
@@ -335,19 +377,19 @@
                                 <!-- Terms and Conditions -->
                                 <div class="mt-8 p-4 bg-gray-50 rounded-xl">
                                     <div class="flex items-start">
-                                        <input type="checkbox" 
-                                               id="terms" 
-                                               class="mt-1 mr-3 rounded border-gray-300 text-blue-600 focus:ring-blue-500" 
+                                        <input type="checkbox"
+                                               id="terms"
+                                               class="mt-1 mr-3 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                                                required>
                                         <label for="terms" class="text-sm text-gray-600">
-                                            Saya menyetujui <a href="#" class="text-blue-600 hover:underline">Syarat & Ketentuan</a> serta 
+                                            Saya menyetujui <a href="#" class="text-blue-600 hover:underline">Syarat & Ketentuan</a> serta
                                             <a href="#" class="text-blue-600 hover:underline">Kebijakan Privasi</a> yang berlaku.
                                         </label>
                                     </div>
                                 </div>
 
                                 <!-- Submit Button -->
-                                <button type="submit" 
+                                <button type="submit"
                                         class="w-full mt-6 py-4 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold text-lg rounded-xl shadow-lg hover:shadow-xl transition duration-300 transform hover:-translate-y-0.5 flex items-center justify-center">
                                     <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
@@ -400,4 +442,42 @@
             </form>
         </div>
     </div>
+
+    {{-- SCRIPT UNTUK HITUNG TOTAL DINAMIS --}}
+    <script>
+        let subtotal   = {{ $subtotal }};
+        let shipping   = 20000;
+        let serviceFee = 5000;
+
+        function formatRupiah(num) {
+            return 'Rp ' + num.toLocaleString('id-ID');
+        }
+
+        function updateSummary() {
+            document.getElementById('shipping_text').textContent = formatRupiah(shipping);
+            document.getElementById('service_text').textContent  = formatRupiah(serviceFee);
+            document.getElementById('total_text').textContent    = formatRupiah(subtotal + shipping + serviceFee);
+
+            document.getElementById('shipping_cost_input').value = shipping;
+            document.getElementById('service_fee_input').value   = serviceFee;
+        }
+
+        document.getElementById('shipping_reg').addEventListener('click', function () {
+            shipping = 20000;
+            updateSummary();
+        });
+
+        document.getElementById('shipping_exp').addEventListener('click', function () {
+            shipping = 35000;
+            updateSummary();
+        });
+
+        document.getElementById('shipping_sds').addEventListener('click', function () {
+            shipping = 50000;
+            updateSummary();
+        });
+
+        // init pertama
+        updateSummary();
+    </script>
 </x-app-layout>

@@ -48,7 +48,21 @@
                                 Masukkan Kode Virtual Account
                             </h3>
                         </div>
-                        
+                        @if($va)
+                        <div class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                            <p class="text-gray-700 text-sm mb-1">Kode Virtual Account Anda:</p>
+                            <div class="flex items-center justify-between">
+                                <span class="font-mono text-lg font-bold text-blue-700">
+                                    {{ $va->va_code }}
+                                </span>
+                                <button onclick="navigator.clipboard.writeText('{{ $va->va_code }}')"
+                                        class="px-3 py-1 text-sm bg-blue-600 text-white rounded-md">
+                                    Copy
+                                </button>
+                            </div>
+                        </div>
+                    @endif
+
                         <form method="POST" action="{{ route('payment.process') }}" class="p-6">
                             @csrf
                             
@@ -66,10 +80,9 @@
                                     </div>
                                     <input type="text" 
                                         name="va_code" 
-                                        class="pl-10 w-full px-4 py-3 text-lg border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-200 font-mono tracking-wider"
-                                        placeholder="Contoh: 8888012345678901"
-                                        required
-                                        maxlength="16">
+                                        value="{{ $va ? $va->va_code : '' }}"
+                                        class="pl-10 w-full px-4 py-3 text-lg border border-gray-300 rounded-xl"
+                                        required>
                                 </div>
                                 <p class="mt-2 text-sm text-gray-500">Masukkan 16-digit kode Virtual Account yang Anda terima</p>
                             </div>

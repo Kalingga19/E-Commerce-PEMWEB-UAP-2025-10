@@ -73,14 +73,18 @@ Route::middleware(['auth', 'member'])->group(function () {
     // PAYMENT PAGE (untuk topup & checkout)
     Route::get('/payment', [PaymentController::class, 'index'])->name('payment');
     Route::post('/payment', [PaymentController::class, 'process'])->name('payment.process');
+    Route::get('/payment/qris', [PaymentController::class, 'qris'])->name('payment.qris');
 
     Route::get('/search', [HomeController::class, 'search'])->name('search');
     Route::get('/category/{slug}', [HomeController::class, 'category'])->name('category.filter');
     
-    Route::post('/cart/add', [\App\Http\Controllers\Member\CartController::class, 'add'])->name('cart.add');
-    Route::get('/cart', [\App\Http\Controllers\Member\CartController::class, 'index'])->name('cart.index');
-    Route::post('/cart/remove', [\App\Http\Controllers\Member\CartController::class, 'remove'])->name('cart.remove');
-
+    Route::prefix('cart')->name('cart.')->group(function () {
+        Route::get('/', [CartController::class, 'index'])->name('index');
+        Route::post('/add', [CartController::class, 'add'])->name('add');
+        Route::delete('/clear', [CartController::class, 'clear'])->name('clear');
+    });
+    Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::patch('/cart/qty/{id}', [CartController::class, 'updateQty'])->name('cart.updateQty');
 });
 
 Route::middleware(['auth', 'seller'])->prefix('seller')->name('seller.')->group(function () {
