@@ -49,7 +49,7 @@
                             </h3>
                         </div>
                         
-                        <form method="POST" action="/payment" class="p-6">
+                        <form method="POST" action="{{ route('payment.process') }}" class="p-6">
                             @csrf
                             
                             <!-- VA Code Input -->
@@ -65,11 +65,11 @@
                                         </svg>
                                     </div>
                                     <input type="text" 
-                                           name="va_code" 
-                                           class="pl-10 w-full px-4 py-3 text-lg border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-200 font-mono tracking-wider"
-                                           placeholder="Contoh: 8888012345678901"
-                                           required
-                                           maxlength="16">
+                                        name="va_code" 
+                                        class="pl-10 w-full px-4 py-3 text-lg border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-200 font-mono tracking-wider"
+                                        placeholder="Contoh: 8888012345678901"
+                                        required
+                                        maxlength="16">
                                 </div>
                                 <p class="mt-2 text-sm text-gray-500">Masukkan 16-digit kode Virtual Account yang Anda terima</p>
                             </div>

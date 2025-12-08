@@ -10,7 +10,13 @@ class PaymentController extends Controller
 {
     public function index()
     {
-        return view('customer.payment.index');
+        // Ambil VA terbaru milik user yang belum dibayar
+        $va = \App\Models\VirtualAccount::where('user_id', auth()->id())
+                    ->where('is_paid', false)
+                    ->latest()
+                    ->first();
+
+        return view('customer.payment.index', compact('va'));
     }
 
     public function process(Request $request)
@@ -22,11 +28,11 @@ class PaymentController extends Controller
         $va = VirtualAccount::where('va_code', $request->va_code)->first();
 
         if (!$va) {
-            return back()->with('error', 'VA tidak ditemukan.');
+            return back()->with('error', 'Kode Virtual Account tidak ditemukan!');
         }
 
-        if ($va->is_paid) {
-            return back()->with('error', 'VA sudah dibayar.');
+        if ($va->user_id !== auth()->id()) {
+            return back()->with('error', 'VA ini bukan milik Anda.');
         }
 
         // TOPUP HANDLING

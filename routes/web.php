@@ -63,6 +63,7 @@ Route::middleware(['auth', 'member'])->group(function () {
 
     // History transaksi
     Route::get('/history', [HistoryController::class, 'index'])->name('history');
+    Route::get('/history/{id}', [HistoryController::class, 'show'])->name('history.show');
 
     // Wallet Topup
     Route::get('/wallet/topup', [WalletController::class, 'create'])->name('wallet.topup');
@@ -71,6 +72,11 @@ Route::middleware(['auth', 'member'])->group(function () {
     // PAYMENT PAGE (untuk topup & checkout)
     Route::get('/payment', [PaymentController::class, 'index'])->name('payment');
     Route::post('/payment', [PaymentController::class, 'process'])->name('payment.process');
+
+    Route::get('/search', [HomeController::class, 'search'])->name('search');
+    Route::get('/category/{slug}', [HomeController::class, 'category'])->name('category.filter');
+    Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+
 });
 
 Route::middleware(['auth', 'seller'])->prefix('seller')->name('seller.')->group(function () {

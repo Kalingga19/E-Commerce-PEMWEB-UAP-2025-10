@@ -47,8 +47,8 @@
                         @if($thumb)
                         <div class="relative overflow-hidden rounded-2xl bg-gray-100 mb-4">
                             <img src="{{ asset('storage/'.$thumb->image) }}" 
-                                 class="w-full h-96 object-contain transform hover:scale-105 transition duration-500"
-                                 alt="{{ $product->name }}">
+                                class="w-full h-96 object-contain transform hover:scale-105 transition duration-500"
+                                alt="{{ $product->name }}">
                             <!-- Badges -->
                             @if($product->stock < 10)
                             <div class="absolute top-4 left-4">
@@ -82,8 +82,8 @@
                             @foreach($product->productImages as $img)
                             <button class="relative overflow-hidden border-2 border-gray-200 rounded-xl hover:border-blue-500 transition duration-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
                                 <img src="{{ asset('storage/'.$img->image) }}" 
-                                     class="w-full h-20 object-cover hover:scale-110 transition duration-300"
-                                     alt="Product thumbnail">
+                                    class="w-full h-20 object-cover hover:scale-110 transition duration-300"
+                                    alt="Product thumbnail">
                                 @if($img->is_thumbnail)
                                 <div class="absolute inset-0 bg-blue-500/20 border-2 border-blue-500 rounded-xl"></div>
                                 @endif
@@ -168,7 +168,7 @@
                         </div>
 
                         <!-- Order Form -->
-                        <form method="POST" action="/checkout" class="bg-gray-50 rounded-2xl p-6">
+                        <form method="POST" action="{{ route('checkout') }}" class="bg-gray-50 rounded-2xl p-6">
                             @csrf
                             <input type="hidden" name="product_id" value="{{ $product->id }}">
 
@@ -233,15 +233,19 @@
                                     </svg>
                                     Tambah ke Keranjang
                                 </button>
-                                
-                                <button type="submit" 
-                                        class="py-4 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition duration-300 transform hover:-translate-y-0.5 flex items-center justify-center group"
-                                        {{ $product->stock < 1 ? 'disabled' : '' }}>
-                                    <svg class="w-6 h-6 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
-                                    </svg>
+                                                                
+                                <a href="{{ route('checkout', ['product_id' => $product->id, 'qty' => 1]) }}" onclick="event.preventDefault(); 
+                                    document.getElementById('buy-now-form').submit();"
+                                    class="py-4 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition duration-300 flex items-center justify-center group">
+                                    <svg class="w-6 h-6 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
                                     Beli Sekarang
-                                </button>
+                                </a>
+
+                                <form id="buy-now-form" method="GET" action="{{ route('checkout') }}">
+                                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                    <input type="hidden" name="qty" id="qty-input" value="1">
+                                </form>
+
                             </div>
 
                             <!-- Security Notice -->

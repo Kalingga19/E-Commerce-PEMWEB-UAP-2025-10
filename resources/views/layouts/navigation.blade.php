@@ -5,7 +5,13 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
+                    <a href="{{ auth()->check() 
+                    ? (auth()->user()->role === 'admin' 
+                        ? route('admin.dashboard')
+                        : (auth()->user()->store && auth()->user()->store->is_verified 
+                            ? route('seller.dashboard') 
+                            : route('home')))
+                    : route('home') }}">
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
                     </a>
                 </div>
@@ -13,8 +19,13 @@
                 <!-- Navigation Links -->
                 @auth
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
+                    <x-nav-link :href="auth()->user()->role === 'admin'
+                                ? route('admin.dashboard')
+                                : (auth()->user()->store && auth()->user()->store->is_verified
+                                    ? route('seller.dashboard')
+                                    : route('home'))"
+                    >
+                        Dashboard
                     </x-nav-link>
                 </div>
                 @endauth

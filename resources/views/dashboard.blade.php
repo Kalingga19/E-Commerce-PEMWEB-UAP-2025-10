@@ -110,7 +110,7 @@
                         @foreach([65, 80, 75, 90, 85, 95, 70] as $height)
                             <div class="flex-1 flex flex-col items-center">
                                 <div class="w-full bg-gradient-to-t from-blue-500 to-blue-300 rounded-t-lg" 
-                                     style="height: {{ $height }}%"></div>
+                                    style="height: {{ $height }}%"></div>
                                 <span class="text-xs text-gray-500 mt-2">{{ ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'][$loop->index] }}</span>
                             </div>
                         @endforeach

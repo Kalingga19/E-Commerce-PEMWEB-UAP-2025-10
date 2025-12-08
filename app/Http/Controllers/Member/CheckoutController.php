@@ -94,5 +94,6 @@ class CheckoutController extends Controller
 
             return redirect()->route('history')->with('success', 'Pembayaran berhasil!');
         }
+        return redirect()->route('payment')->with('success', 'Silakan lakukan pembayaran.');
     }
 }

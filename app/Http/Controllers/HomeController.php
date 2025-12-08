@@ -7,11 +7,48 @@ use App\Models\ProductCategory;
 
 class HomeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $categories = ProductCategory::all();
-        $products = Product::with('productImages')->latest()->paginate(12);
+        $sort = $request->sort;
 
-        return view('customer.home', compact('categories', 'products'));
+        $products = Product::with('productImages');
+
+        if ($sort == 'price_asc') $products->orderBy('price');
+        elseif ($sort == 'price_desc') $products->orderByDesc('price');
+        elseif ($sort == 'name_asc') $products->orderBy('name');
+        else $products->latest();
+
+        return view('customer.home', [
+            'categories' => ProductCategory::all(),
+            'products' => $products->paginate(12),
+        ]);
     }
+
+    public function search(Request $request)
+    {
+        $q = $request->q;
+
+        $products = Product::where('name', 'like', "%$q%")
+            ->orWhere('description', 'like', "%$q%")
+            ->paginate(12);
+
+        return view('customer.home', [
+            'products' => $products,
+            'categories' => ProductCategory::all(),
+        ]);
+    }
+
+    public function category($slug)
+    {
+        $category = ProductCategory::where('slug', $slug)->firstOrFail();
+
+        $products = Product::where('category_id', $category->id)->paginate(12);
+
+        return view('customer.home', [
+            'categories' => ProductCategory::all(),
+            'products' => $products,
+            'selectedCategory' => $category,
+        ]);
+    }
+
 }
