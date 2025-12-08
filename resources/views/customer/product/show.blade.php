@@ -197,12 +197,12 @@
                                         </svg>
                                     </button>
                                     <input type="number" 
-                                           name="qty" 
-                                           id="quantity" 
-                                           value="1" 
-                                           min="1" 
-                                           max="{{ $product->stock }}"
-                                           class="w-20 h-12 text-center border-y border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg font-medium">
+                                        name="qty" 
+                                        id="quantity" 
+                                        value="1" 
+                                        min="1" 
+                                        max="{{ $product->stock }}"
+                                        class="w-20 h-12 text-center border-y border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg font-medium">
                                     <button type="button" onclick="increaseQty()" class="w-12 h-12 bg-white border border-gray-300 rounded-r-xl flex items-center justify-center hover:bg-gray-50 transition duration-200">
                                         <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
@@ -226,13 +226,16 @@
 
                             <!-- Action Buttons -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <button type="button" 
-                                        class="py-4 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-medium rounded-xl shadow-lg hover:shadow-xl transition duration-300 flex items-center justify-center group">
-                                    <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                                    </svg>
-                                    Tambah ke Keranjang
-                                </button>
+                                
+                                    <button type="submit" formmethod="POST" formaction="{{ route('cart.add') }}"
+                                            class="py-4 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-medium rounded-xl shadow-lg hover:shadow-xl transition duration-300 flex items-center justify-center group">
+                                        <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                        </svg>
+                                        <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                        <input type="hidden" name="qty" id="qty_for_cart" value="1">
+                                        Tambah ke Keranjang
+                                    </button>
                                                                 
                                 <a href="{{ route('checkout', ['product_id' => $product->id, 'qty' => 1]) }}" onclick="event.preventDefault(); 
                                     document.getElementById('buy-now-form').submit();"
@@ -342,31 +345,34 @@
             document.getElementById('totalPrice').textContent = 'Rp ' + total.toLocaleString('id-ID');
         }
         
+        document.getElementById('quantity').addEventListener('input', function () {
+            document.getElementById('qty_for_cart').value = this.value;
+            document.getElementById('qty-input').value = this.value;
+        });
+
+        // tombol + dan - juga harus update
         function increaseQty() {
             const input = document.getElementById('quantity');
             let value = parseInt(input.value);
             if (value < maxStock) {
                 input.value = value + 1;
                 updateTotalPrice();
+                document.getElementById('qty_for_cart').value = input.value;
+                document.getElementById('qty-input').value = input.value;
             }
         }
-        
+
         function decreaseQty() {
             const input = document.getElementById('quantity');
             let value = parseInt(input.value);
             if (value > 1) {
                 input.value = value - 1;
                 updateTotalPrice();
+                document.getElementById('qty_for_cart').value = input.value;
+                document.getElementById('qty-input').value = input.value;
             }
         }
-        
-        document.getElementById('quantity').addEventListener('input', function() {
-            let value = parseInt(this.value);
-            if (value < 1) this.value = 1;
-            if (value > maxStock) this.value = maxStock;
-            updateTotalPrice();
-        });
-        
+
         // Initialize total price
         updateTotalPrice();
     </script>

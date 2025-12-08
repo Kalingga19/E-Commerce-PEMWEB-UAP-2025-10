@@ -165,14 +165,14 @@
                         <!-- Action Button -->
                         <form action="{{ route('cart.add') }}" method="POST">
                         @csrf
-                            <button class="w-full mt-4 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium rounded-xl transition duration-200 flex items-center justify-center group">
+                            <button type="submit" class="w-full mt-4 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium rounded-xl transition duration-200 flex items-center justify-center group">
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
                                 </svg>
                                 Tambah ke Keranjang
                             </button>
                             <input type="hidden" name="product_id" value="{{ $product->id }}">
-                            <input type="hidden" name="qty" id="quantity">
+                            <input type="hidden" name="qty" id="qty_for_cart" value="1">
                         </form>
                     </div>
                 </div>

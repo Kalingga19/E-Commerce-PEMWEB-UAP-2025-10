@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\StoreVerificationController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\Member\CartController;
 
 use App\Http\Controllers\ProfileController;
 
@@ -75,7 +76,10 @@ Route::middleware(['auth', 'member'])->group(function () {
 
     Route::get('/search', [HomeController::class, 'search'])->name('search');
     Route::get('/category/{slug}', [HomeController::class, 'category'])->name('category.filter');
-    Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+    
+    Route::post('/cart/add', [\App\Http\Controllers\Member\CartController::class, 'add'])->name('cart.add');
+    Route::get('/cart', [\App\Http\Controllers\Member\CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/remove', [\App\Http\Controllers\Member\CartController::class, 'remove'])->name('cart.remove');
 
 });
 
