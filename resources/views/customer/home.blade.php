@@ -33,19 +33,27 @@
 
                 <!-- Categories Filter -->
                 <div class="mb-8 overflow-x-auto">
-                    <a href="{{ route('category.filter', $cat->slug) }}">
                     <div class="flex space-x-2 pb-4">
-                        <button class="px-4 py-2 bg-blue-600 text-white rounded-full font-medium hover:bg-blue-700 transition duration-200 whitespace-nowrap">
-                            Semua
-                        </button>
+
+                        {{-- Tombol semua produk --}}
+                        <a href="{{ route('home') }}">
+                            <button class="px-4 py-2 bg-blue-600 text-white rounded-full font-medium hover:bg-blue-700 transition duration-200 whitespace-nowrap">
+                                Semua
+                            </button>
+                        </a>
+
+                        {{-- Tombol kategori --}}
                         @foreach($categories as $category)
-                        <button class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-full font-medium hover:bg-gray-50 transition duration-200 whitespace-nowrap">
-                            {{ $category->name }}
-                        </button>
+                            <a href="{{ route('category.filter', $category->slug) }}">
+                                <button class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-full font-medium hover:bg-gray-50 transition duration-200 whitespace-nowrap">
+                                    {{ $category->name }}
+                                </button>
+                            </a>
                         @endforeach
+
                     </div>
-                    </a>
                 </div>
+
 
                 <!-- Stats Bar -->
                 <div class="bg-white rounded-xl shadow-sm p-4 mb-6">

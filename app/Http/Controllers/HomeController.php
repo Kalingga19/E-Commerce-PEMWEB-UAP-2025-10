@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\ProductCategory;
+use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
@@ -42,7 +43,7 @@ class HomeController extends Controller
     {
         $category = ProductCategory::where('slug', $slug)->firstOrFail();
 
-        $products = Product::where('category_id', $category->id)->paginate(12);
+        $products = Product::where('product_category_id', $category->id)->paginate(12);
 
         return view('customer.home', [
             'categories' => ProductCategory::all(),
