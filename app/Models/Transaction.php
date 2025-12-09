@@ -31,26 +31,27 @@ class Transaction extends Model
 
     public function buyer()
     {
-        return $this->belongsTo(\App\Models\User::class, 'buyer_id');
+        return $this->belongsTo(User::class, 'buyer_id');
     }
 
     public function store()
     {
-        return $this->belongsTo(\App\Models\Store::class);
+        return $this->belongsTo(Store::class);
     }
 
     public function details()
     {
         return $this->hasMany(TransactionDetail::class, 'transaction_id');
     }
-    
+
     public function productReviews()
     {
         return $this->hasMany(ProductReview::class);
     }
 
-    public function transactions()
+    public function transactionDetails()
     {
-        return $this->hasMany(\App\Models\Transaction::class, 'buyer_id');
+        return $this->details(); 
     }
+
 }

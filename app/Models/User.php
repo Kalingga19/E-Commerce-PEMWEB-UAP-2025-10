@@ -99,5 +99,10 @@ class User extends Authenticatable
     {
         return $this->hasOne(\App\Models\Cart::class);
     }
+    
+    public function sellerTransactions()
+    {
+        return $this->hasMany(Transaction::class, 'store_id', 'id');
+    }
 
 }

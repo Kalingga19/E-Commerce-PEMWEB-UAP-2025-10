@@ -191,6 +191,8 @@
                         <form method="POST" action="{{ route('seller.orders.update', $order) }}" class="p-6">
                             @csrf
                             @method('PUT')
+                            <input type="hidden" name="payment_status" id="payment_status">
+
                             
                             <!-- Tracking Number -->
                             <div class="mb-8">
@@ -217,23 +219,33 @@
                             <div class="mb-8">
                                 <label class="block text-sm font-medium text-gray-700 mb-3">Update Status Pesanan</label>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <button type="button" 
-                                            onclick="updateStatus('processing')"
-                                            class="py-3 bg-blue-50 border-2 border-blue-200 text-blue-700 font-medium rounded-xl hover:bg-blue-100 transition duration-200 flex items-center justify-center group">
-                                        <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                        </svg>
-                                        Konfirmasi Pesanan
-                                    </button>
-                                    
-                                    <button type="button" 
-                                            onclick="updateStatus('shipped')"
-                                            class="py-3 bg-green-50 border-2 border-green-200 text-green-700 font-medium rounded-xl hover:bg-green-100 transition duration-200 flex items-center justify-center group">
-                                        <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
-                                        </svg>
-                                        Tandai Dikirim
-                                    </button>
+                                    <form action="{{ route('seller.orders.updateStatus', $order) }}" method="POST">
+                                        @csrf
+                                        @method('PATCH')
+                                        <input type="hidden" name="status" value="processing">
+                                        <button type="button" 
+                                                onclick="setStatus('processing')"
+                                                class="py-3 bg-blue-50 border-2 border-blue-200 text-blue-700 font-medium rounded-xl hover:bg-blue-100 transition duration-200 flex items-center justify-center group">
+                                            <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                            Konfirmasi Pesanan
+                                        </button>
+                                    </form>
+
+                                    <form action="{{ route('seller.orders.updateStatus', $order) }}" method="POST">
+                                        @csrf
+                                        @method('PATCH')
+                                        <input type="hidden" name="status" value="shipped">
+                                        <button type="button" 
+                                                onclick="setStatus('shipped')"
+                                                class="py-3 bg-green-50 border-2 border-green-200 text-green-700 font-medium rounded-xl hover:bg-green-100 transition duration-200 flex items-center justify-center group">
+                                            <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
+                                            </svg>
+                                            Tandai Dikirim
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
 
@@ -241,18 +253,24 @@
                             <div class="mb-8">
                                 <label class="block text-sm font-medium text-gray-700 mb-3">Catatan untuk Pelanggan</label>
                                 <textarea class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-200 resize-none"
-                                          rows="3"
-                                          placeholder="Tambahkan catatan tentang pengiriman atau status pesanan..."></textarea>
+                                        rows="3"
+                                        placeholder="Tambahkan catatan tentang pengiriman atau status pesanan..."></textarea>
                             </div>
 
                             <!-- Submit Button -->
-                            <button type="submit" 
-                                    class="w-full py-4 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold text-lg rounded-xl shadow-lg hover:shadow-xl transition duration-300 transform hover:-translate-y-0.5 flex items-center justify-center group">
-                                <svg class="w-6 h-6 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                Update Pesanan
-                            </button>
+                            <form method="POST" action="{{ route('seller.orders.update', $order) }}" class="p-6">
+                                @csrf
+                                @method('PUT')
+                                <input type="hidden" name="payment_status" id="payment_status">
+
+                                <button type="submit" 
+                                        class="w-full py-4 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold text-lg rounded-xl shadow-lg hover:shadow-xl transition duration-300 transform hover:-translate-y-0.5 flex items-center justify-center group">
+                                    <svg class="w-6 h-6 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                    Update Pesanan
+                                </button>
+                            </form>
                         </form>
                     </div>
                 </div>
@@ -273,11 +291,11 @@
                             <div class="space-y-4">
                                 <div>
                                     <p class="text-sm text-gray-600 mb-1">Nama</p>
-                                    <p class="font-medium text-gray-800">{{ $order->user->name ?? 'Pelanggan' }}</p>
+                                    <p class="font-medium text-gray-800">{{ $order->buyer->name ?? 'Pelanggan' }}</p>
                                 </div>
                                 <div>
                                     <p class="text-sm text-gray-600 mb-1">Email</p>
-                                    <p class="font-medium text-gray-800">{{ $order->user->email ?? '-' }}</p>
+                                    <p class="font-medium text-gray-800">{{ $order->buyer->email ?? '-' }}</p>
                                 </div>
                                 <div>
                                     <p class="text-sm text-gray-600 mb-1">Telepon</p>
@@ -285,7 +303,7 @@
                                 </div>
                                 <div>
                                     <p class="text-sm text-gray-600 mb-1">Bergabung</p>
-                                    <p class="font-medium text-gray-800">{{ $order->user->created_at->format('d M Y') ?? '-' }}</p>
+                                    <p class="font-medium text-gray-800">{{ $order->buyer->created_at->format('d M Y') ?? '-' }}</p>
                                 </div>
                             </div>
                         </div>
@@ -360,18 +378,24 @@
                     <div class="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-100 rounded-2xl p-6">
                         <h4 class="font-medium text-gray-800 mb-4">Aksi Cepat</h4>
                         <div class="space-y-3">
-                            <button class="w-full py-3 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition duration-200 flex items-center justify-center">
+                            <button disabled class="w-full py-3 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition duration-200 flex items-center justify-center cursor-not-allowed">
                                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                                 </svg>
                                 Kirim Notifikasi
                             </button>
-                            <button class="w-full py-3 bg-white border border-red-300 text-red-600 font-medium rounded-lg hover:bg-red-50 transition duration-200 flex items-center justify-center">
-                                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                </svg>
-                                Batalkan Pesanan
-                            </button>
+
+                            <form action="{{ route('seller.orders.updateStatus', $order) }}" method="POST" onsubmit="return confirm('Yakin batalkan?')">
+                                @csrf
+                                @method('PATCH')
+                                <input type="hidden" name="status" value="cancelled">
+                                <button class="w-full py-3 bg-white border border-red-300 text-red-600 font-medium rounded-lg hover:bg-red-50 transition duration-200 flex items-center justify-center">
+                                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                    Batalkan Pesanan
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -381,28 +405,15 @@
 
     <script>
     function updateStatus(status) {
-        let statusText = '';
-        let statusColor = '';
-        
-        switch(status) {
-            case 'processing':
-                statusText = 'Diproses';
-                statusColor = 'blue';
-                break;
-            case 'shipped':
-                statusText = 'Dikirim';
-                statusColor = 'green';
-                break;
-            case 'completed':
-                statusText = 'Selesai';
-                statusColor = 'purple';
-                break;
+        document.getElementById('payment_status').value = status;
+
+        // Optional: konfirmasi
+        if(confirm("Ubah status pesanan menjadi: " + status + "?")) {
+            document.querySelector("form").submit();
         }
-        
-        if(confirm(`Ubah status pesanan menjadi "${statusText}"?`)) {
-            // Add logic to update status via AJAX or form submission
-            alert(`Status berhasil diubah menjadi ${statusText}`);
-        }
+    }
+    function setStatus(status) {
+        document.getElementById('payment_status').value = status;
     }
     </script>
 </x-app-layout>

@@ -102,6 +102,36 @@ Route::middleware(['auth', 'seller'])->prefix('seller')->name('seller.')->group(
 
     // Withdrawals
     Route::resource('/withdrawals', WithdrawalController::class);
+    Route::get('/store/edit', [StoreRegistrationController::class, 'edit'])->name('store.edit');
+    Route::put('/store/update', [StoreRegistrationController::class, 'update'])->name('store.update');
+
+    // Step 1
+    Route::get('/seller/store/register', [StoreRegistrationController::class, 'create'])->name('seller.store.create');
+    Route::post('/seller/store/register', [StoreRegistrationController::class, 'store'])->name('seller.store.store');
+
+    // Step 2 - verifikasi toko
+    Route::get('/seller/store/verify', [StoreRegistrationController::class, 'verify'])->name('seller.store.verify');
+    Route::post('/seller/store/verify', [StoreRegistrationController::class, 'submitVerification'])->name('seller.store.verify.submit');
+
+    // Step 3 - selesai
+    Route::get('/seller/store/complete', [StoreRegistrationController::class, 'complete'])->name('seller.store.complete');
+
+    Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus'])
+        ->name('orders.updateStatus');
+});
+
+Route::prefix('seller/store')->middleware(['auth'])->group(function () {
+
+    // Step 1 sudah ada: register.store
+
+    Route::get('/verify', [StoreRegistrationController::class, 'verify'])
+        ->name('store.register.verify');
+
+    Route::post('/verify', [StoreRegistrationController::class, 'verifyStore'])
+        ->name('store.register.verify.store');
+
+    Route::get('/completed', [StoreRegistrationController::class, 'completed'])
+        ->name('store.register.completed');
 });
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
