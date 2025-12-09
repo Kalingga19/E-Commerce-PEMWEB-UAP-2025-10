@@ -185,120 +185,250 @@
                 </div>
             </div>
 
-            <!-- Charts Section -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                <!-- Revenue Chart -->
-                <div class="bg-white rounded-2xl shadow-xl p-6">
-                    <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-lg font-semibold text-gray-800">Statistik Pendapatan</h3>
-                        <select class="border border-gray-300 rounded-lg px-3 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option>Bulan Ini</option>
-                            <option>Bulan Lalu</option>
-                            <option>Tahun Ini</option>
-                        </select>
-                    </div>
-                    <div class="h-64 flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl">
-                        <div class="text-center">
-                            <svg class="w-12 h-12 text-blue-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                            </svg>
-                            <p class="text-gray-600">Chart akan ditampilkan di sini</p>
+            <!-- Main Content Area -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Left Column - Charts & Recent Transactions -->
+                <div class="lg:col-span-2 space-y-8">
+                    <!-- Revenue Chart -->
+                    <div class="bg-white rounded-2xl shadow-xl p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-semibold text-gray-800">Statistik Pendapatan</h3>
+                            <select class="border border-gray-300 rounded-lg px-3 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option>Bulan Ini</option>
+                                <option>Bulan Lalu</option>
+                                <option>Tahun Ini</option>
+                            </select>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Top Products -->
-                <div class="space-y-4">
-                    @forelse($topProducts as $item)
-                        <div class="flex items-center p-3 bg-gray-50 rounded-xl">
-                            <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mr-4">
-                                <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                        <div class="h-64 flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl">
+                            <div class="text-center">
+                                <svg class="w-12 h-12 text-blue-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                                 </svg>
+                                <p class="text-gray-600">Chart akan ditampilkan di sini</p>
                             </div>
-
-                            <div class="flex-1">
-                                <h4 class="font-medium text-gray-800">
-                                    {{ $item->product->name ?? 'Produk Terhapus' }}
-                                </h4>
-                                <p class="text-sm text-gray-500">
-                                    Terjual: {{ $item->total_sold }} unit
-                                </p>
-                            </div>
-
-                            <span class="font-bold text-green-600">
-                                Rp {{ number_format($item->product->price * $item->total_sold, 0, ',', '.') }}
-                            </span>
                         </div>
-                    @empty
-                        <p class="text-gray-500 text-sm">Belum ada penjualan</p>
-                    @endforelse
+                    </div>
+
+                    <!-- Recent Transactions -->
+                    <div class="bg-white rounded-2xl shadow-xl p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-semibold text-gray-800">Transaksi Terbaru</h3>
+                            <a href="{{ route('seller.orders.index') }}" class="text-sm text-blue-600 hover:text-blue-800 font-medium">
+                                Lihat Semua →
+                            </a>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="text-left text-sm text-gray-500 border-b">
+                                        <th class="pb-3 font-medium">ID Transaksi</th>
+                                        <th class="pb-3 font-medium">Pembeli</th>
+                                        <th class="pb-3 font-medium">Jumlah</th>
+                                        <th class="pb-3 font-medium">Status</th>
+                                        <th class="pb-3 font-medium">Waktu</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100">
+                                    <!-- Sample Data from your image -->
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="py-4">
+                                            <div class="font-medium text-gray-900">TRX893522</div>
+                                            <div class="text-xs text-gray-500">Member Dua</div>
+                                        </td>
+                                        <td class="py-4 text-gray-600">Member Dua</td>
+                                        <td class="py-4">
+                                            <span class="font-semibold text-green-600">Rp 199,914</span>
+                                        </td>
+                                        <td class="py-4">
+                                            <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
+                                                Completed
+                                            </span>
+                                        </td>
+                                        <td class="py-4 text-gray-500 text-sm">2 hours ago</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="py-4">
+                                            <div class="font-medium text-gray-900">TRX274774</div>
+                                            <div class="text-xs text-gray-500">Member Dua</div>
+                                        </td>
+                                        <td class="py-4 text-gray-600">Member Dua</td>
+                                        <td class="py-4">
+                                            <span class="font-semibold text-green-600">Rp 136,211</span>
+                                        </td>
+                                        <td class="py-4">
+                                            <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
+                                                Shipping
+                                            </span>
+                                        </td>
+                                        <td class="py-4 text-gray-500 text-sm">2 hours ago</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="py-4">
+                                            <div class="font-medium text-gray-900">TRX841752</div>
+                                            <div class="text-xs text-gray-500">Member Dua</div>
+                                        </td>
+                                        <td class="py-4 text-gray-600">Member Dua</td>
+                                        <td class="py-4">
+                                            <span class="font-semibold text-green-600">Rp 121,211</span>
+                                        </td>
+                                        <td class="py-4">
+                                            <span class="px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-medium">
+                                                Pending
+                                            </span>
+                                        </td>
+                                        <td class="py-4 text-gray-500 text-sm">2 hours ago</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="py-4">
+                                            <div class="font-medium text-gray-900">TRX279464</div>
+                                            <div class="text-xs text-gray-500">Member Dua</div>
+                                        </td>
+                                        <td class="py-4 text-gray-600">Member Dua</td>
+                                        <td class="py-4">
+                                            <span class="font-semibold text-green-600">Rp 121,211</span>
+                                        </td>
+                                        <td class="py-4">
+                                            <span class="px-3 py-1 bg-red-100 text-red-800 rounded-full text-xs font-medium">
+                                                Cancelled
+                                            </span>
+                                        </td>
+                                        <td class="py-4 text-gray-500 text-sm">17 hours ago</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
 
-            @foreach($latestOrders as $order)
-            <tr>
-                <td>{{ $order->code }}</td>
-                <td>{{ $order->buyer->name ?? 'Tidak diketahui' }}</td>
-                <td>Rp {{ number_format($order->grand_total) }}</td>
-                <td>
-                    <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
-                        {{ ucfirst($order->payment_status) }}
-                    </span>
-                </td>
-                <td>{{ $order->created_at->diffForHumans() }}</td>
-            </tr>
-            @endforeach
-
-            <!-- Quick Actions -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <a href="{{ route('seller.products.create') }}" class="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition duration-300 transform hover:-translate-y-1">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="p-3 bg-white/20 rounded-xl">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                            </svg>
+                <!-- Right Column - Top Products & Quick Actions -->
+                <div class="space-y-8">
+                    <!-- Top Products -->
+                    <div class="bg-white rounded-2xl shadow-xl p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-6">Produk Terlaris</h3>
+                        <div class="space-y-4">
+                            <!-- Sample Data from your image -->
+                            <div class="flex items-center p-3 bg-gray-50 rounded-xl">
+                                <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mr-4">
+                                    <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-800">Produk Control 3</h4>
+                                    <p class="text-sm text-gray-500">Terjual: 4 unit</p>
+                                </div>
+                                <span class="font-bold text-green-600">
+                                    Rp 799,656
+                                </span>
+                            </div>
+                            
+                            <div class="flex items-center p-3 bg-gray-50 rounded-xl">
+                                <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mr-4">
+                                    <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-800">Produk Control 4</h4>
+                                    <p class="text-sm text-gray-500">Terjual: 1 unit</p>
+                                </div>
+                                <span class="font-bold text-green-600">
+                                    Rp 121,211
+                                </span>
+                            </div>
+                            
+                            @forelse($topProducts as $item)
+                                <div class="flex items-center p-3 bg-gray-50 rounded-xl">
+                                    <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mr-4">
+                                        <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h4 class="font-medium text-gray-800">
+                                            {{ $item->product->name ?? 'Produk Terhapus' }}
+                                        </h4>
+                                        <p class="text-sm text-gray-500">
+                                            Terjual: {{ $item->total_sold }} unit
+                                        </p>
+                                    </div>
+                                    <span class="font-bold text-green-600">
+                                        Rp {{ number_format($item->product->price * $item->total_sold, 0, ',', '.') }}
+                                    </span>
+                                </div>
+                            @empty
+                                <p class="text-gray-500 text-sm text-center py-4">Belum ada penjualan</p>
+                            @endforelse
                         </div>
-                        <svg class="w-5 h-5 opacity-75" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                        </svg>
                     </div>
-                    <h4 class="font-bold text-lg mb-2">Tambah Produk</h4>
-                    <p class="text-sm opacity-90">Tambahkan produk baru ke toko Anda</p>
-                </a>
 
-                <a href="{{ route('seller.orders.index') }}" class="bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition duration-300 transform hover:-translate-y-1">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="p-3 bg-white/20 rounded-xl">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                            </svg>
+                    <!-- Quick Actions -->
+                    <div class="bg-white rounded-2xl shadow-xl p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-6">Aksi Cepat</h3>
+                        <div class="space-y-4">
+                            <a href="{{ route('seller.products.create') }}" class="flex items-center p-4 bg-gradient-to-r from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100 rounded-xl transition duration-200 group">
+                                <div class="p-3 bg-green-100 rounded-lg mr-4 group-hover:bg-green-200 transition duration-200">
+                                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-800">Tambah Produk</h4>
+                                    <p class="text-sm text-gray-600">Tambahkan produk baru</p>
+                                </div>
+                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </a>
+
+                            <a href="{{ route('seller.orders.index') }}" class="flex items-center p-4 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 rounded-xl transition duration-200 group">
+                                <div class="p-3 bg-blue-100 rounded-lg mr-4 group-hover:bg-blue-200 transition duration-200">
+                                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-800">Kelola Pesanan</h4>
+                                    <p class="text-sm text-gray-600">Lihat dan proses pesanan</p>
+                                </div>
+                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </a>
+
+                            <a href="#" class="flex items-center p-4 bg-gradient-to-r from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 rounded-xl transition duration-200 group">
+                                <div class="p-3 bg-purple-100 rounded-lg mr-4 group-hover:bg-purple-200 transition duration-200">
+                                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-800">Analytics</h4>
+                                    <p class="text-sm text-gray-600">Analisis performa toko</p>
+                                </div>
+                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </a>
+
+                            <a href="#" class="flex items-center p-4 bg-gradient-to-r from-amber-50 to-orange-50 hover:from-amber-100 hover:to-orange-100 rounded-xl transition duration-200 group">
+                                <div class="p-3 bg-amber-100 rounded-lg mr-4 group-hover:bg-amber-200 transition duration-200">
+                                    <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-800">Pengaturan</h4>
+                                    <p class="text-sm text-gray-600">Kelola pengaturan toko</p>
+                                </div>
+                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </a>
                         </div>
-                        <svg class="w-5 h-5 opacity-75" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                        </svg>
                     </div>
-                    <h4 class="font-bold text-lg mb-2">Kelola Pesanan</h4>
-                    <p class="text-sm opacity-90">Lihat dan proses semua pesanan</p>
-                </a>
-
-                <a href="#" class="bg-gradient-to-r from-purple-500 to-pink-600 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition duration-300 transform hover:-translate-y-1">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="p-3 bg-white/20 rounded-xl">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                            </svg>
-                        </div>
-                        <svg class="w-5 h-5 opacity-75" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                        </svg>
-                    </div>
-                    <h4 class="font-bold text-lg mb-2">Analytics</h4>
-                    <p class="text-sm opacity-90">Lihat analisis performa toko</p>
-                </a>
-
-                <a href="#" class="bg-gradient-to-r from-amber-500 to-orange-600 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition duration-300 transform hover:-translate-y-1">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="p-3 bg-white/20 rounded-xl">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9
+                </div>
+            </div>
+        </div>
+    </div>
 </x-app-layout>

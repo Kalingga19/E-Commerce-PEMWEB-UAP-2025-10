@@ -150,4 +150,21 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('/categories', AdminCategoryController::class);
 });
 
+// ========== UI COMPATIBILITY ROUTES (Alias untuk layout) ==========
+
+// Produk
+Route::get('/products', [App\Http\Controllers\HomeController::class, 'search'])
+    ->name('products.index');
+
+// Kategori
+Route::get('/categories', function () {
+    return redirect()->route('home');
+})->name('categories.index');
+
+// Pesanan saya (user)
+Route::get('/orders', function () {
+    return redirect()->route('history');
+})->name('orders.index');
+
+
 require __DIR__.'/auth.php';

@@ -170,7 +170,7 @@
                 
                 <!-- Content Area -->
                 <div class="px-6 py-8 sm:px-10 sm:py-10 relative z-10">
-                    @yield('content')
+                    @yield('scripts')
                 </div>
 
                 <!-- Footer Links -->

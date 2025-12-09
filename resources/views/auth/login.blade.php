@@ -75,12 +75,12 @@
                             <i class="fas fa-key text-gray-400"></i>
                         </div>
                         <input id="password" 
-                               class="pl-10 block w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-300 focus:ring-opacity-50 transition duration-200 py-3" 
-                               type="password" 
-                               name="password" 
-                               required 
-                               autocomplete="current-password"
-                               placeholder="••••••••">
+                            class="pl-10 block w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-300 focus:ring-opacity-50 transition duration-200 py-3" 
+                            type="password" 
+                            name="password" 
+                            required 
+                            autocomplete="current-password"
+                            placeholder="••••••••">
                     </div>
                     @error('password')
                         <p class="mt-2 text-sm text-red-600 flex items-center">
