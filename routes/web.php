@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\StoreVerificationController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Member\CartController;
 
 use App\Http\Controllers\ProfileController;
@@ -147,7 +148,13 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('/users', AdminUserController::class);
 
     // Manajemen kategori global
-    Route::resource('/categories', AdminCategoryController::class);
+    Route::resource('categories', AdminCategoryController::class);
+
+    Route::resource('products', \App\Http\Controllers\Admin\AdminProductController::class);
+    Route::patch('products/{product}/suspend', [\App\Http\Controllers\Admin\AdminProductController::class, 'suspend'])
+        ->name('products.suspend');
+    Route::patch('products/{product}/activate', [\App\Http\Controllers\Admin\AdminProductController::class, 'activate'])
+        ->name('products.activate');
 });
 
 // ========== UI COMPATIBILITY ROUTES (Alias untuk layout) ==========

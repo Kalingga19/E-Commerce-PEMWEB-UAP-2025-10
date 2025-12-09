@@ -21,6 +21,7 @@ class Store extends Model
         'bank_name',
         'bank_account_name',
         'bank_account_number',
+        'verification_note',
     ];
 
     // relationships one store has one owner (user)

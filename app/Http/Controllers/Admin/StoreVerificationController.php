@@ -8,24 +8,36 @@ use Illuminate\Http\Request;
 
 class StoreVerificationController extends Controller
 {
+    // Tampilkan semua toko yang belum diverifikasi
     public function index()
     {
-        $stores = Store::where('is_verified', false)->get();
+        $stores = Store::where('is_verified', 0)->get();
 
         return view('admin.verification.index', compact('stores'));
     }
 
+    // Approve toko
     public function approve(Store $store)
     {
-        $store->update(['is_verified' => true]);
+        $store->update([
+            'is_verified' => 1
+        ]);
 
-        return back()->with('success', 'Store berhasil diverifikasi.');
+        return back()->with('success', 'Toko berhasil disetujui!');
     }
 
-    public function reject(Store $store)
+    // Reject toko
+    public function reject(Store $store, Request $request)
     {
-        $store->delete();
+        $request->validate([
+            'reason' => 'required|string'
+        ]);
 
-        return back()->with('success', 'Store berhasil ditolak & dihapus.');
+        $store->update([
+            'is_verified' => -1,
+            'verification_note' => $request->reason,
+        ]);
+
+        return back()->with('error', 'Toko telah ditolak dengan alasan.');
     }
 }

@@ -8,7 +8,6 @@ class ProductCategory extends Model
 {
 
     protected $fillable = [
-        'parent_id',
         'image',
         'name',
         'slug',

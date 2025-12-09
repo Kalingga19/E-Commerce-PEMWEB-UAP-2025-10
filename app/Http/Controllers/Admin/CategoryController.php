@@ -22,14 +22,21 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required',
-            'slug' => 'required|unique:product_categories'
+            'name'        => 'required|max:255',
+            'slug'        => 'required|unique:product_categories,slug',
+            'tagline'     => 'nullable|max:60',
+            'description' => 'nullable|max:500',
         ]);
 
-        ProductCategory::create($request->all());
+        ProductCategory::create([
+            'name'        => $request->name,
+            'slug'        => $request->slug,
+            'tagline'     => $request->tagline,
+            'description' => $request->description,
+        ]);
 
         return redirect()->route('admin.categories.index')
-                        ->with('success', 'Kategori berhasil ditambahkan.');
+            ->with('success', 'Kategori berhasil ditambahkan!');
     }
 
     public function edit(ProductCategory $category)
@@ -40,14 +47,21 @@ class CategoryController extends Controller
     public function update(Request $request, ProductCategory $category)
     {
         $request->validate([
-            'name' => 'required',
-            'slug' => 'required|unique:product_categories,slug,' . $category->id,
+            'name' => 'required|max:255',
+            'slug' => 'required|unique:product_categories,slug',
+            'tagline' => 'nullable|max:60',
+            'description' => 'nullable|max:500',
         ]);
 
-        $category->update($request->all());
+        $category->update([
+            'name'        => $request->name,
+            'slug'        => $request->slug,
+            'tagline'     => $request->tagline,
+            'description' => $request->description,
+        ]);
 
         return redirect()->route('admin.categories.index')
-                        ->with('success', 'Kategori berhasil diperbarui.');
+            ->with('success', 'Kategori berhasil diperbarui.');
     }
 
     public function destroy(ProductCategory $category)
@@ -56,4 +70,10 @@ class CategoryController extends Controller
 
         return back()->with('success', 'Kategori berhasil dihapus.');
     }
+
+    public function show(ProductCategory $category)
+    {
+        return view('admin.categories.show', compact('category'));
+    }
+
 }
