@@ -91,6 +91,36 @@ Route::middleware(['auth', 'member'])->group(function () {
     Route::patch('/cart/qty/{id}', [CartController::class, 'updateQty'])->name('cart.updateQty');
 });
 
+Route::get('/api/wallet/balance', function () {
+    $balance = auth()->user()->balance->balance ?? 0;
+
+    return [
+        'balance' => $balance,
+        'balance_formatted' => 'Rp ' . number_format($balance, 0, ',', '.')
+    ];
+})->name('api.wallet.balance');
+
+Route::get('/api/wallet/stats', function () {
+    $user = auth()->user();
+
+    // Ambil semua topup yang sudah paid
+    $topups = \App\Models\VirtualAccount::where('user_id', $user->id)
+        ->where('type', 'topup')
+        ->where('is_paid', true)
+        ->orderBy('created_at', 'desc')
+        ->get();
+
+    $last = $topups->first();
+    $total = $topups->sum('amount');
+
+    return [
+        'last_topup' => $last ? 'Rp ' . number_format($last->amount, 0, ',', '.') : 'Rp 0',
+        'last_date'  => $last ? $last->created_at->diffForHumans() : '-',
+        'total_topup' => 'Rp ' . number_format($total, 0, ',', '.'),
+    ];
+})->name('api.wallet.stats');
+
+
 Route::middleware(['auth', 'seller'])->prefix('seller')->name('seller.')->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

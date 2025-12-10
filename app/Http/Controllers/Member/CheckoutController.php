@@ -155,7 +155,7 @@ class CheckoutController extends Controller
             'tracking_number' => '',
             'tax'             => $serviceFee,
             'grand_total'     => $grand_total,
-            'payment_status'  => 'unpaid',
+            'payment_status'  => 'pending',
         ]);
 
 

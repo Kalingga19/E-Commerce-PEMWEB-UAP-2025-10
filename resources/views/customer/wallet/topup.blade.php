@@ -29,7 +29,7 @@
                     <!-- Current Balance -->
                     <div class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl p-6 shadow-lg">
                         <p class="text-sm opacity-90 mb-1">Saldo Saat Ini</p>
-                        <p class="text-3xl font-bold">Rp 1.250.000</p>
+                        <p class="text-3xl font-bold"><h1 id="current-balance">Rp {{ number_format($balance->balance ?? 0, 0, ',', '.') }}</h1></p>
                         <div class="flex items-center mt-2 text-sm opacity-90">
                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -45,7 +45,7 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-sm text-gray-600">Topup Terakhir</p>
-                                <p class="text-xl font-bold text-gray-800">Rp 500.000</p>
+                                <p id="last-topup-amount" class="text-xl font-bold text-gray-800">Rp 0</p>
                             </div>
                             <div class="p-2 bg-green-100 rounded-lg">
                                 <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -53,14 +53,14 @@
                                 </svg>
                             </div>
                         </div>
-                        <p class="text-xs text-gray-500 mt-2">2 hari yang lalu</p>
+                        <p id="last-topup-date" class="text-xs text-gray-500 mt-2">-</p>
                     </div>
                     
                     <div class="bg-white border border-gray-200 rounded-xl p-4">
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-sm text-gray-600">Total Topup</p>
-                                <p class="text-xl font-bold text-gray-800">Rp 3.250.000</p>
+                                <p id="total-topup" class="text-xl font-bold text-gray-800">Rp 0</p>
                             </div>
                             <div class="p-2 bg-blue-100 rounded-lg">
                                 <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -114,15 +114,14 @@
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                         <span class="text-gray-500 font-bold">Rp</span>
                                     </div>
-                                    <input type="number" 
-                                           name="amount" 
-                                           id="amount"
-                                           class="pl-12 w-full px-4 py-3 text-2xl border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 font-bold"
-                                           placeholder="0"
-                                           required
-                                           min="10000"
-                                           step="10000"
-                                           oninput="updateSuggestedAmounts(this.value)">
+                                    <input type="text"
+                                            class="pl-12 w-full px-4 py-3 text-2xl border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 font-bold"
+                                            id="topup_amount"
+                                            name="amount"
+                                            class="input"
+                                            placeholder="Rp 0"
+                                            inputmode="numeric"
+                                            oninput="updateSuggestedAmounts(this.value)">
                                 </div>
                                 <p class="mt-2 text-sm text-gray-500">Minimum topup: Rp 10.000</p>
                             </div>
@@ -404,29 +403,51 @@
     </div>
 
     <script>
+        const input = document.getElementById('topup_amount');
+
+        // Format input menjadi Rupiah saat diketik
+        input.addEventListener('input', function() {
+            let number = this.value.replace(/\D/g, "");
+            this.value = new Intl.NumberFormat('id-ID').format(number);
+        });
+
+        // Bersihkan format sebelum submit
+        document.querySelector("form").addEventListener("submit", function() {
+            let raw = input.value.replace(/\D/g, "");
+            input.value = raw;
+        });
+
+        // ============================
+        // JUMLAH CEPAT (FIXED)
+        // ============================
         function setAmount(amount) {
-            document.getElementById('amount').value = amount;
-            formatAmountInput();
+            // Convert angka ke format rupiah
+            let formatted = new Intl.NumberFormat('id-ID').format(amount);
+
+            input.value = formatted; // Masukkan ke input
         }
-        
-        function formatAmountInput() {
-            const input = document.getElementById('amount');
-            let value = parseInt(input.value);
-            
-            if (value < 10000) {
-                input.value = 10000;
-            }
-            
-            // Format display (optional)
-            input.value = value.toLocaleString('id-ID');
-        }
-        
-        function updateSuggestedAmounts(value) {
-            // Logic to update suggested amounts based on input
-            // This is a placeholder for future enhancement
-        }
-        
-        // Initialize with default format
-        document.getElementById('amount').addEventListener('blur', formatAmountInput);
+
+        // ============================
+        // REALTIME SALDO (5 detik)
+        // ============================
+        setInterval(() => {
+            fetch("{{ route('api.wallet.balance') }}")
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById("current-balance").innerText =
+                        data.balance_formatted;
+                });
+        }, 5000);
+
+        setInterval(() => {
+            fetch("{{ route('api.wallet.stats') }}")
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById("last-topup-amount").innerText = data.last_topup;
+                    document.getElementById("last-topup-date").innerText = data.last_date;
+                    document.getElementById("total-topup").innerText = data.total_topup;
+                });
+        }, 5000);
     </script>
+
 </x-app-layout>

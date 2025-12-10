@@ -16,23 +16,34 @@ class WalletController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'amount' => 'required|numeric|min:1000',
-        ]);
+        // BERSIHKAN FORMAT RUPIAH (100.000 → 100000)
+        $rawAmount = preg_replace('/\D/', '', $request->amount);
+
+        // VALIDASI MINIMAL TOPUP
+        if ($rawAmount < 10000) {
+            return redirect()->back()->with('error', 'Minimal topup adalah Rp 10.000');
+        }
 
         $user = Auth::user();
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
+        }
 
-        $va_code = "TOPUP-" . rand(100000, 999999);
+        // GENERATE KODE VA UNIK
+        $va_code = "TOPUP-" . time() . rand(100, 999);
 
+        // SIMPAN VA TOPUP
         VirtualAccount::create([
-            'user_id' => $user->id,
+            'user_id'        => $user->id,
             'transaction_id' => null,
-            'va_code' => $va_code,
-            'amount' => $request->amount,
-            'type' => 'topup',
-            'is_paid' => false,
+            'va_code'        => $va_code,
+            'amount'         => $rawAmount,   // SIMPAN ANGKA BERSIH
+            'type'           => 'topup',
+            'is_paid'        => false,
         ]);
 
-        return redirect()->route('payment')->with('success', 'VA Topup berhasil dibuat: ' . $va_code);
+        return redirect()
+            ->route('payment')
+            ->with('success', 'Virtual Account Topup berhasil dibuat: ' . $va_code);
     }
 }
