@@ -195,19 +195,36 @@ class CheckoutController extends Controller
         // --- Wallet ---
         if ($request->payment_method === 'wallet') {
 
-            if (!$user->balance || $user->balance->balance < $grand_total) {
-                return back()->with('error', 'Saldo tidak cukup.');
+            // Ambil data saldo user (relasi hasOne ke UserBalance)
+            $userBalance = $user->balance; 
+
+            // 1. Belum punya dompet / saldo masih 0 → lempar ke halaman topup
+            if (!$userBalance || $userBalance->balance <= 0) {
+                return redirect()
+                    ->route('wallet.topup')
+                    ->with('error', 'Saldo dompet kamu masih 0. Silakan lakukan top-up terlebih dahulu.');
             }
 
-            $user->balance->balance -= $grand_total;
-            $user->balance->save();
+            // 2. Ada saldo tapi TIDAK CUKUP untuk transaksi ini → juga ke topup
+            if ($userBalance->balance < $grand_total) {
+                return redirect()
+                    ->route('wallet.topup')
+                    ->with('error', 'Saldo tidak mencukupi untuk transaksi ini. Silakan top-up terlebih dahulu.');
+            }
 
+            // 3. Saldo cukup → kurangi saldo
+            $userBalance->balance -= $grand_total;
+            $userBalance->save();
+
+            // Tandai transaksi sudah dibayar
             $transaction->update(['payment_status' => 'paid']);
 
+            // Kalau checkout dari keranjang, keranjang dikosongkan
             session()->forget('cart');
 
-            return redirect()->route('history.show', $transaction->id)
-                            ->with('success', 'Pembayaran menggunakan saldo berhasil!');
+            return redirect()
+                ->route('history.show', $transaction->id)
+                ->with('success', 'Pembayaran menggunakan saldo berhasil!');
         }
 
 

@@ -62,4 +62,16 @@ class AdminProductController extends Controller
 
         return back()->with('success', 'Produk telah diaktifkan kembali.');
     }
+
+    public function show($id)
+    {
+        $product = Product::with(['category', 'store'])->find($id);
+
+        if (!$product) {
+            abort(404, "Product not found");
+        }
+
+        return view('admin.products.show', compact('product'));
+    }
+
 }

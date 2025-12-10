@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Seller;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Notifications\StoreNeedsVerification;
 
 class StoreRegistrationController extends Controller
 {
@@ -16,24 +17,19 @@ class StoreRegistrationController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name'   => 'required',
-            'phone'  => 'required',
-            'city'   => 'required',
-            'address'=> 'required',
-        ]);
+        $store = Store::create([
+                'user_id' => auth()->id(),
+                'name' => $request->name,
+                'is_verified' => false,
+            ]);
 
-        $user = Auth::user();
+            // KIRIM NOTIFIKASI KE ADMIN
+            $admins = User::where('role', 'admin')->get();
+            foreach ($admins as $admin) {
+                $admin->notify(new StoreNeedsVerification($store));
+        }
 
-        $store = $user->store()->create([
-            'name'   => $request->name,
-            'phone'  => $request->phone,
-            'city'   => $request->city,
-            'address'=> $request->address,
-            'is_verified' => false
-        ]);
-
-        return redirect()->route('seller.store.verify');
+        return redirect()->route('dashboard')->with('success', 'Toko berhasil didaftarkan dan menunggu verifikasi admin.');
     }
 
     public function submitVerification(Request $request)

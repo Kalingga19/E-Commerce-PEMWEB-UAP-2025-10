@@ -9,14 +9,14 @@ return new class extends Migration
     public function up()
     {
         Schema::table('product_categories', function (Blueprint $table) {
-            $table->text('description')->nullable()->change();
+            $table->text('description')->nullable()->after('tagline');
         });
     }
 
     public function down()
     {
         Schema::table('product_categories', function (Blueprint $table) {
-            $table->text('description')->change();
+            $table->dropColumn('description');
         });
     }
 

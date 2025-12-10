@@ -2,6 +2,18 @@
     <div class="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-8 px-4 sm:px-6 lg:px-8">
         <div class="max-w-6xl mx-auto">
             <!-- Header Section -->
+            @if (session('success'))
+                <div class="mb-4 rounded-xl bg-green-50 border border-green-200 px-4 py-3 text-green-800 text-sm">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div class="mb-4 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-red-800 text-sm">
+                    {{ session('error') }}
+                </div>
+            @endif
+
             <div class="mb-8">
                 <div class="flex items-center justify-between mb-6">
                     <div>

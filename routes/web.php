@@ -23,6 +23,9 @@ use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Member\CartController;
 
+use App\Http\Controllers\Admin\AdminTransactionController;
+use App\Http\Controllers\Admin\AdminWithdrawalController;
+
 use App\Http\Controllers\ProfileController;
 
 Route::middleware('auth')->group(function () {
@@ -155,23 +158,19 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         ->name('products.suspend');
     Route::patch('products/{product}/activate', [\App\Http\Controllers\Admin\AdminProductController::class, 'activate'])
         ->name('products.activate');
+
+    // Transactions
+    Route::get('/transactions', [AdminTransactionController::class, 'index'])->name('transactions.index');
+    Route::get('/transactions/{id}', [AdminTransactionController::class, 'show'])->name('transactions.show');
+    Route::post('/transactions/{id}/approve', [AdminTransactionController::class, 'approve'])->name('transactions.approve');
+    Route::post('/transactions/{id}/reject', [AdminTransactionController::class, 'reject'])->name('transactions.reject');
+    Route::post('/transactions/{id}/status', [AdminTransactionController::class, 'updateStatus'])->name('transactions.updateStatus');
+
+    // Withdrawals
+    Route::get('/withdrawals', [AdminWithdrawalController::class, 'index'])->name('withdrawals.index');
+    Route::get('/withdrawals/{id}', [AdminWithdrawalController::class, 'show'])->name('withdrawals.show');
+    Route::post('/withdrawals/{id}/approve', [AdminWithdrawalController::class, 'approve'])->name('withdrawals.approve');
+    Route::post('/withdrawals/{id}/reject', [AdminWithdrawalController::class, 'reject'])->name('withdrawals.reject');
 });
-
-// ========== UI COMPATIBILITY ROUTES (Alias untuk layout) ==========
-
-// Produk
-Route::get('/products', [App\Http\Controllers\HomeController::class, 'search'])
-    ->name('products.index');
-
-// Kategori
-Route::get('/categories', function () {
-    return redirect()->route('home');
-})->name('categories.index');
-
-// Pesanan saya (user)
-Route::get('/orders', function () {
-    return redirect()->route('history');
-})->name('orders.index');
-
 
 require __DIR__.'/auth.php';
