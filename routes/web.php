@@ -49,7 +49,6 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/dashboard', function () {
     $user = auth()->user();
-
     if ($user->role === 'admin') {
         return redirect()->route('admin.dashboard');
     }
@@ -62,11 +61,6 @@ Route::get('/dashboard', function () {
 })->middleware(['auth'])->name('dashboard');
 
 
-/*
-|--------------------------------------------------------------------------
-| PUBLIC PRODUCT DETAIL
-|--------------------------------------------------------------------------
-*/
 Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.show');
 
 
@@ -76,20 +70,15 @@ Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'member'])->group(function () {
-
-    // Register Store
     Route::get('/store/register', [StoreRegistrationController::class, 'create'])->name('store.register');
     Route::post('/store/register', [StoreRegistrationController::class, 'store'])->name('store.register.store');
 
-    // Checkout
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
     Route::post('/checkout', [CheckoutController::class, 'store']);
 
-    // History
     Route::get('/history', [HistoryController::class, 'index'])->name('history');
     Route::get('/history/{id}', [HistoryController::class, 'show'])->name('history.show');
 
-    // Wallet Topup
     Route::get('/wallet/topup', [WalletController::class, 'create'])->name('wallet.topup');
     Route::post('/wallet/topup', [WalletController::class, 'store'])->name('wallet.topup.store');
 
@@ -155,7 +144,6 @@ Route::get('/api/wallet/stats', function () {
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'seller'])->prefix('seller')->name('seller.')->group(function () {
-
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Produk CRUD
@@ -175,7 +163,6 @@ Route::middleware(['auth', 'seller'])->prefix('seller')->name('seller.')->group(
     // Saldo Toko
     Route::get('/balance', [BallanceController::class, 'index'])->name('balance');
 
-    // Withdrawals
     Route::resource('/withdrawals', WithdrawalController::class);
 
     // Edit Store
@@ -202,7 +189,6 @@ Route::middleware(['auth', 'seller'])->prefix('seller')->name('seller.')->group(
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     // Verifikasi Toko
@@ -228,7 +214,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/transactions/{id}/reject', [AdminTransactionController::class, 'reject'])->name('transactions.reject');
     Route::post('/transactions/{id}/status', [AdminTransactionController::class, 'updateStatus'])->name('transactions.updateStatus');
 
-    // Withdrawals
     Route::get('/withdrawals', [AdminWithdrawalController::class, 'index'])->name('withdrawals.index');
     Route::get('/withdrawals/{id}', [AdminWithdrawalController::class, 'show'])->name('withdrawals.show');
     Route::post('/withdrawals/{id}/approve', [AdminWithdrawalController::class, 'approve'])->name('withdrawals.approve');

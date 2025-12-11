@@ -15,7 +15,7 @@ class MemberSeeder extends Seeder
             'name' => 'Member Satu',
             'email' => 'member1@example.com',
             'password' => 'member1',
-            'role' => 'member',
+            'role' => 'seller',
         ]);
 
         // Member 2

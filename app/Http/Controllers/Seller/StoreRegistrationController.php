@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Notifications\StoreNeedsVerification;
+use App\Models\Store;
+use App\Models\User;
 
 class StoreRegistrationController extends Controller
 {

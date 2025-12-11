@@ -1,3 +1,21 @@
+@php
+    $homeRoute = '/'; // default untuk guest
+
+    if(auth()->check()) {
+        switch(auth()->user()->role) {
+            case 'admin':
+                $homeRoute = route('admin.dashboard');
+                break;
+            case 'seller':
+                $homeRoute = route('seller.dashboard');
+                break;
+            case 'member':
+                $homeRoute = route('home');
+                break;
+        }
+    }
+@endphp
+
 @guest
 <!-- Navbar untuk Guest (Belum Login) -->
 <nav class="bg-gradient-to-r from-blue-600 to-indigo-700 shadow-xl">
@@ -58,7 +76,7 @@
                     <div class="w-14 h-14 rounded-xl overflow-hidden">
                         <img src="/images/logozylomart.png" class="w-full h-full object-cover">
                     </div>
-                    <span class="text-xl font-bold text-white">Admin Panel</span>
+                    <span class="text-xl font-bold text-white">ZyloMart</span>
                 </a>
 
                 <!-- Admin Navigation Links -->
@@ -142,7 +160,7 @@
 @endauth
 
 @auth
-@if(auth()->user()->role !== 'admin')
+@if(auth()->user()->role == 'member')
 <!-- Navbar untuk User (Bukan Admin) -->
 <nav class="bg-gradient-to-r from-blue-600 to-indigo-700 shadow-xl">
     <div class="max-w-7xl mx-auto px-4 py-3">
@@ -160,7 +178,104 @@
                 <!-- User Navigation Links -->
                 <div class="hidden md:flex items-center space-x-4">
                     <!-- Home -->
-                    <a href="/" 
+                    <a href="{{ route('home') }}" 
+                        class="relative px-4 py-2.5 text-white/90 hover:text-white font-medium rounded-xl hover:bg-white/10 transition-all duration-300 group flex items-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                        </svg>
+                        <span>Home</span>
+                    </a>
+
+                    <!-- Cek Status Pengiriman -->
+                    <a href="#" 
+                        class="relative px-4 py-2.5 text-white/90 hover:text-white font-medium rounded-xl hover:bg-white/10 transition-all duration-300 group flex items-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                        </svg>
+                        <span>Cek Pengiriman</span>
+                    </a>
+
+                    <!-- Riwayat Transaksi -->
+                    <a href="/history" 
+                       class="relative px-4 py-2.5 text-white/90 hover:text-white font-medium rounded-xl hover:bg-white/10 transition-all duration-300 group flex items-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span>Riwayat Transaksi</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Right Section - Keranjang & User Menu -->
+            <div class="flex items-center space-x-6">
+                <!-- Keranjang Button -->
+                <a href="#" 
+                    class="relative p-3 bg-white/20 backdrop-blur-sm rounded-xl hover:bg-white/30 hover:scale-110 transition-all duration-300 group">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                    <!-- Cart Badge -->
+                    <span class="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-r from-red-500 to-pink-600 text-white text-xs font-bold rounded-full flex items-center justify-center animate-bounce">
+                        3
+                    </span>
+                </a>
+
+                <!-- User Profile & Logout -->
+                <div class="flex items-center space-x-4">
+                    <!-- User Avatar & Name -->
+                    <div class="hidden md:flex items-center space-x-3 px-4 py-2 rounded-xl bg-white/10 backdrop-blur-sm">
+                        <div class="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center">
+                            <span class="text-white font-bold text-sm">{{ substr(auth()->user()->name, 0, 1) }}</span>
+                        </div>
+                        <div>
+                            <span class="text-white font-medium block">{{ auth()->user()->name }}</span>
+                            <span class="text-white/70 text-xs">Member</span>
+                        </div>
+                    </div>
+
+                    <!-- Logout Button -->
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" 
+                                class="px-6 py-2.5 bg-white/20 backdrop-blur-sm text-white font-semibold rounded-xl hover:bg-white/30 hover:scale-105 transition-all duration-300 border border-white/30 flex items-center space-x-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                            </svg>
+                            <span class="hidden md:inline">Logout</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+@endif
+@endauth
+
+@auth
+@if(auth()->user()->role == 'seller')
+<!-- Navbar untuk User (Bukan Admin) -->
+<nav class="bg-gradient-to-r from-blue-600 to-indigo-700 shadow-xl">
+    <div class="max-w-7xl mx-auto px-4 py-3">
+        <div class="flex justify-between items-center">
+            <!-- Left Section -->
+            <div class="flex items-center space-x-8">
+                <!-- Logo/Brand -->
+                <a href="{{ $homeRoute }}" class="flex items-center space-x-3 group">
+                    <div class="p-2 bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 transition-all duration-300">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                            </path>
+                        </svg>
+                    </div>
+                    <span class="text-xl font-bold text-white">ZyloMart</span>
+                </a>
+
+                <!-- User Navigation Links -->
+                <div class="hidden md:flex items-center space-x-4">
+                    <!-- Home -->
+                    <a href="{{ route('seller.dashboard') }}" 
                         class="relative px-4 py-2.5 text-white/90 hover:text-white font-medium rounded-xl hover:bg-white/10 transition-all duration-300 group flex items-center space-x-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>

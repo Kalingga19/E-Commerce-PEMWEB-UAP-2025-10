@@ -9,7 +9,7 @@ class StoreSeeder extends Seeder
 {
     public function run(): void
     {
-        $owner = config('seed.owner_id');
+        $owner = 1;
 
         Store::create([
             'user_id' => $owner,

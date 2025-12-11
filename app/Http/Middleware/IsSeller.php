@@ -16,13 +16,17 @@ class IsSeller
         }
 
         // Role harus member
-        if ($user->role !== 'member') {
+        if ($user->role !== 'seller') {
             return abort(403, 'Access denied. Seller only.');
         }
 
         // User harus punya store
         if (!$user->store) {
-            return abort(403, 'You do not have a store.');
+            return redirect()->route('store.register')->with('error', 'Silakan buat toko terlebih dahulu.');
+        }
+
+        if (!$user->store) {
+            abort(403, 'YOU DO NOT HAVE A STORE.');
         }
 
         // Store harus sudah diverifikasi admin

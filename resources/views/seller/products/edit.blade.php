@@ -137,7 +137,6 @@
                                            value="{{ old('price', $product->price) }}"
                                            required
                                            min="0"
-                                           step="1000"
                                            placeholder="0"
                                            class="block w-full px-4 py-4 pl-14 border border-gray-300 rounded-xl
                                                   focus:ring-3 focus:ring-blue-500 focus:border-blue-500

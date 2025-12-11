@@ -50,4 +50,9 @@ class Store extends Model
         return $this->hasMany(Withdrawal::class);
     }
 
+    public function productCategories()
+    {
+        return $this->hasMany(ProductCategory::class);
+    }
+
 }
