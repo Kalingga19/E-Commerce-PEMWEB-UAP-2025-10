@@ -74,6 +74,7 @@
             <!-- Main Stats Grid -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <!-- Total Produk Card -->
+                <a href="{{ route('seller.products.index') }}">
                 <div class="bg-gradient-to-br from-white to-blue-50 rounded-2xl shadow-xl p-6 border border-blue-100 transform transition-transform duration-300 hover:-translate-y-1">
                     <div class="flex items-center justify-between mb-6">
                         <div class="p-3 bg-blue-100 rounded-xl">
@@ -92,6 +93,7 @@
                         <span>Bertambah 2 produk bulan ini</span>
                     </div>
                 </div>
+                </a>
 
                 <!-- Total Pesanan Card -->
                 <div class="bg-gradient-to-br from-white to-purple-50 rounded-2xl shadow-xl p-6 border border-purple-100 transform transition-transform duration-300 hover:-translate-y-1">

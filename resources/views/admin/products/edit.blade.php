@@ -6,10 +6,10 @@
                 <div class="flex items-center justify-between mb-6">
                     <div class="flex items-center">
                         <a href="{{ route('admin.products.index') }}" 
-                           class="mr-4 p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                            class="mr-4 p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200">
                             <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                      d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                                    d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                             </svg>
                         </a>
                         <div>
@@ -30,7 +30,7 @@
                         <div class="p-4 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg mr-6">
                             <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                      d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
                             </svg>
                         </div>
                         <div>
