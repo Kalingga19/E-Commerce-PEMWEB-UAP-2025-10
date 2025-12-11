@@ -161,7 +161,8 @@
                                 </div>
                                 <h3
                                     class="font-semibold text-gray-800 group-hover:text-blue-600 transition-colors duration-300">
-                                    {{ $category->name }}</h3>
+                                    {{ $category->name }}
+                                </h3>
                                 <p class="text-sm text-gray-500 mt-1">{{ rand(50, 500) }} produk</p>
                             </div>
                         </a>
@@ -189,127 +190,77 @@
                 </div>
 
                 <!-- Products Grid -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                    @foreach($products->take(8) as $product)
-                        <div
-                            class="group bg-white rounded-3xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100">
-                            <!-- Product Image Container -->
-                            <div class="relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
-                                @php
-                                    $thumb = $product->productImages->where('is_thumbnail', true)->first();
-                                    if (!$thumb)
-                                        $thumb = $product->productImages->first();
-                                @endphp
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8">
+                    @foreach($latestProducts as $product)
 
-                                <div class="relative h-72 overflow-hidden">
-                                    @if ($thumb)
-                                        <img src="{{ asset('storage/' . $thumb->image) }}" 
-                                            alt="product image" 
-                                            class="w-full h-full object-cover rounded">
-                                    @else
-                                        <div class="w-full h-full flex items-center justify-center bg-gray-100">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"
-                                                viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="2"
-                                                stroke-linecap="round" stroke-linejoin="round">
-                                                <path d="M6 2L3 7v13a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-3-5z" />
-                                                <path d="M3 7h18" />
-                                                <path d="M16 11a4 4 0 0 1-8 0" />
-                                            </svg>
-                                        </div>
-                                    @endif
-                                </div>
-                                <!-- Action Buttons -->
-                                <div class="absolute top-4 right-4 flex flex-col gap-2">
-                                    <button
-                                        class="p-3 bg-white/90 backdrop-blur-sm rounded-2xl hover:bg-white hover:scale-110 hover:shadow-lg transition-all duration-300 group/wishlist">
-                                        <svg class="w-5 h-5 text-gray-600 group-hover/wishlist:text-red-500 transition-colors duration-300"
-                                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
-                                            </path>
-                                        </svg>
-                                    </button>
-                                </div>
+                        @php
+                            $thumb = $product->productImages->where('is_thumbnail', true)->first();
+                            if (!$thumb) {
+                                $thumb = $product->productImages->first();
+                            }
+                        @endphp
 
-                                <!-- Category Badge -->
-                                @if($product->category)
-                                    <div class="absolute top-4 left-4">
-                                        <span
-                                            class="px-4 py-2 bg-gradient-to-r from-blue-600/90 to-indigo-600/90 backdrop-blur-sm text-white text-sm font-medium rounded-xl shadow-md">
-                                            {{ $product->category->name }}
-                                        </span>
-                                    </div>
-                                @endif
+                        <div class="bg-white rounded-2xl shadow-md hover:shadow-xl transition overflow-hidden group">
 
-                                <!-- Discount Badge -->
-                                @if($product->original_price > $product->price)
-                                    <div class="absolute bottom-4 left-4">
-                                        <span
-                                            class="px-4 py-2 bg-gradient-to-r from-red-500 to-pink-500 text-white text-sm font-bold rounded-xl shadow-md">
-                                            {{ round((($product->original_price - $product->price) / $product->original_price) * 100) }}%
-                                            OFF
-                                        </span>
+                            <!-- Gambar Produk -->
+                            <div class="relative h-44 bg-gray-100 overflow-hidden">
+                                @if($thumb)
+                                    <img src="{{ asset('storage/' . $thumb->image) }}"
+                                        class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
+                                @else
+                                    <div class="w-full h-full flex items-center justify-center text-gray-400">
+                                        No Image
                                     </div>
                                 @endif
                             </div>
 
-                            <!-- Product Info -->
-                            <div class="p-6">
-                                <a href="/product/{{ $product->slug }}" class="block group/link">
-                                    <h3
-                                        class="text-xl font-bold text-gray-900 mb-3 group-hover/link:text-blue-600 transition-colors duration-300 line-clamp-2 min-h-[3.5rem]">
-                                        {{ $product->name }}
-                                    </h3>
-                                </a>
+                            <!-- Info -->
+                            <div class="p-3">
 
-                                <!-- Price Section -->
-                                <div class="mb-6">
-                                    <div class="flex items-end gap-2 mb-1">
-                                        <p class="text-2xl font-bold text-green-600">
-                                            Rp {{ number_format($product->price, 0, ',', '.') }}
-                                        </p>
-                                        @if($product->original_price > $product->price)
-                                            <p class="text-sm text-gray-400 line-through mb-1">
-                                                Rp {{ number_format($product->original_price, 0, ',', '.') }}
-                                            </p>
-                                        @endif
-                                    </div>
+                                <!-- Nama Produk (lebih kecil) -->
+                                <h3 class="font-semibold text-gray-900 mb-1 text-sm line-clamp-2 min-h-[2.3rem]">
+                                    {{ $product->name }}
+                                </h3>
 
-                                    <!-- Rating -->
-                                    <div class="flex items-center gap-2">
-                                        <div class="flex">
-                                            @for($i = 1; $i <= 5; $i++)
-                                                <svg class="w-4 h-4 {{ $i <= 4.8 ? 'text-yellow-400' : 'text-gray-300' }}"
-                                                    fill="currentColor" viewBox="0 0 20 20">
-                                                    <path
-                                                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
-                                                    </path>
-                                                </svg>
-                                            @endfor
-                                        </div>
-                                        <span class="text-sm font-medium text-gray-700">4.8</span>
-                                        <span class="text-gray-400">•</span>
-                                        <span class="text-sm text-gray-500">Terjual 120</span>
+                                <!-- Harga (lebih kecil) -->
+                                <p class="text-green-600 font-bold text-base mb-1">
+                                    Rp {{ number_format($product->price, 0, ',', '.') }}
+                                </p>
+
+                                <!-- Rating (lebih kecil) -->
+                                <div class="flex items-center gap-1 mb-3">
+                                    <div class="flex">
+                                        @for($i = 1; $i <= 5; $i++)
+                                            <svg class="w-3.5 h-3.5 {{ $i <= 4.8 ? 'text-yellow-400' : 'text-gray-300' }}"
+                                                fill="currentColor" viewBox="0 0 20 20">
+                                                <path
+                                                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
+                                                </path>
+                                            </svg>
+                                        @endfor
                                     </div>
+                                    <span class="text-xs text-gray-600">4.8</span>
                                 </div>
 
-                                <!-- Action Button -->
+                                <!-- Tombol kecil -->
                                 <form action="{{ route('cart.add') }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="product_id" value="{{ $product->id }}">
                                     <input type="hidden" name="qty" value="1">
+
                                     <button type="submit"
-                                        class="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 active:scale-95 flex items-center justify-center group/button">
-                                        <svg class="w-5 h-5 mr-3 group-hover/button:scale-110 transition-transform duration-300"
-                                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg shadow-sm transition flex items-center justify-center gap-1">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                         </svg>
-                                        Tambah ke Keranjang
+                                        Tambah
                                     </button>
                                 </form>
+
                             </div>
                         </div>
+
                     @endforeach
                 </div>
 
