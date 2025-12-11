@@ -73,10 +73,7 @@
             <div class="flex items-center space-x-6">
                 <!-- Logo/Brand -->
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-3 group">
-                    <div class="w-14 h-14 rounded-xl overflow-hidden">
-                        <img src="/images/logozylomart.png" class="w-full h-full object-cover">
-                    </div>
-                    <span class="text-xl font-bold text-white">ZyloMart</span>
+                    <span class="text-xl font-bold text-white">Hi, Admin</span>
                 </a>
 
                 <!-- Admin Navigation Links -->
@@ -187,7 +184,7 @@
                     </a>
 
                     <!-- Cek Status Pengiriman -->
-                    <a href="#" 
+                    <a href="{{ route('orders.customerIndex') }}" 
                         class="relative px-4 py-2.5 text-white/90 hover:text-white font-medium rounded-xl hover:bg-white/10 transition-all duration-300 group flex items-center space-x-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
@@ -197,7 +194,7 @@
 
                     <!-- Riwayat Transaksi -->
                     <a href="/history" 
-                       class="relative px-4 py-2.5 text-white/90 hover:text-white font-medium rounded-xl hover:bg-white/10 transition-all duration-300 group flex items-center space-x-2">
+                        class="relative px-4 py-2.5 text-white/90 hover:text-white font-medium rounded-xl hover:bg-white/10 transition-all duration-300 group flex items-center space-x-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
@@ -209,7 +206,7 @@
             <!-- Right Section - Keranjang & User Menu -->
             <div class="flex items-center space-x-6">
                 <!-- Keranjang Button -->
-                <a href="#" 
+                <a href="{{ route('cart.index') }}"
                     class="relative p-3 bg-white/20 backdrop-blur-sm rounded-xl hover:bg-white/30 hover:scale-110 transition-all duration-300 group">
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
@@ -293,30 +290,18 @@
                     </a>
 
                     <!-- Riwayat Transaksi -->
-                    <a href="/history" 
-                       class="relative px-4 py-2.5 text-white/90 hover:text-white font-medium rounded-xl hover:bg-white/10 transition-all duration-300 group flex items-center space-x-2">
+                    <a href="#" 
+                        class="relative px-4 py-2.5 text-white/90 hover:text-white font-medium rounded-xl hover:bg-white/10 transition-all duration-300 group flex items-center space-x-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
-                        <span>Riwayat Transaksi</span>
+                        <span>Penarikan Dana</span>
                     </a>
                 </div>
             </div>
 
             <!-- Right Section - Keranjang & User Menu -->
             <div class="flex items-center space-x-6">
-                <!-- Keranjang Button -->
-                <a href="#" 
-                    class="relative p-3 bg-white/20 backdrop-blur-sm rounded-xl hover:bg-white/30 hover:scale-110 transition-all duration-300 group">
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                    </svg>
-                    <!-- Cart Badge -->
-                    <span class="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-r from-red-500 to-pink-600 text-white text-xs font-bold rounded-full flex items-center justify-center animate-bounce">
-                        3
-                    </span>
-                </a>
-
                 <!-- User Profile & Logout -->
                 <div class="flex items-center space-x-4">
                     <!-- User Avatar & Name -->

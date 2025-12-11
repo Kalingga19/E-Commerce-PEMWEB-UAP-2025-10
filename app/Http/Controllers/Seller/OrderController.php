@@ -75,5 +75,14 @@ class OrderController extends Controller
         }
     }
 
+    public function customerIndex()
+    {
+        $orders = \App\Models\Transaction::where('buyer_id', Auth::id())
+            ->with(['seller.store', 'transactionDetails.product.productImages'])
+            ->latest()
+            ->paginate(10);
+
+        return view('seller.orders.index', compact('orders'));
+    }
 
 }

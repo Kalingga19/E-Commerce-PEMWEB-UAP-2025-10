@@ -19,7 +19,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\StoreVerificationController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
-use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Member\CartController;
 
 use App\Http\Controllers\Admin\AdminTransactionController;
@@ -61,6 +61,11 @@ Route::get('/dashboard', function () {
 })->middleware(['auth'])->name('dashboard');
 
 
+/*
+|--------------------------------------------------------------------------
+| PUBLIC PRODUCT DETAIL
+|--------------------------------------------------------------------------
+*/
 Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.show');
 
 
@@ -70,12 +75,15 @@ Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'member'])->group(function () {
+
+    // Register Store
     Route::get('/store/register', [StoreRegistrationController::class, 'create'])->name('store.register');
     Route::post('/store/register', [StoreRegistrationController::class, 'store'])->name('store.register.store');
 
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
     Route::post('/checkout', [CheckoutController::class, 'store']);
 
+    // History
     Route::get('/history', [HistoryController::class, 'index'])->name('history');
     Route::get('/history/{id}', [HistoryController::class, 'show'])->name('history.show');
 
@@ -181,7 +189,7 @@ Route::middleware(['auth', 'seller'])->prefix('seller')->name('seller.')->group(
     Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
 });
 
-
+Route::get('/orders', [OrderController::class, 'customerIndex'])->name('orders.customerIndex');
 
 /*
 |--------------------------------------------------------------------------
@@ -203,9 +211,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('/categories', AdminCategoryController::class);
 
     // Produk Global
-    Route::resource('/products', AdminProductController::class);
-    Route::patch('products/{product}/suspend', [AdminProductController::class, 'suspend'])->name('products.suspend');
-    Route::patch('products/{product}/activate', [AdminProductController::class, 'activate'])->name('products.activate');
+    Route::resource('/products', AdminProductController::class)->only(['index', 'show', 'edit', 'update', 'destroy']);
+    Route::patch('products/{product}/activate', [AdminProductController::class, 'activate'])
+    ->name('products.activate');
+    Route::patch('products/{product}/suspend', [AdminProductController::class, 'suspend'])
+    ->name('products.suspend');
+
 
     // Transaksi
     Route::get('/transactions', [AdminTransactionController::class, 'index'])->name('transactions.index');

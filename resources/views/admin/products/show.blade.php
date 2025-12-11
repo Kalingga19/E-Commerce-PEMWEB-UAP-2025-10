@@ -7,7 +7,7 @@
             <h1 class="text-2xl font-bold">Detail Produk</h1>
 
             {{-- STATUS PRODUK --}}
-            @if($product->is_active)
+            @if($product->status === 'active')
                 <span class="px-3 py-1 bg-green-100 text-green-700 text-sm rounded-full">Aktif</span>
             @else
                 <span class="px-3 py-1 bg-red-100 text-red-700 text-sm rounded-full">Suspend</span>
@@ -90,7 +90,7 @@
             </a>
 
             {{-- Suspend / Activate --}}
-            @if($product->is_active)
+            @if($product->status === 'active')
                 <form method="POST" action="{{ route('admin.products.suspend', $product->id) }}">
                     @csrf
                     @method('PATCH')

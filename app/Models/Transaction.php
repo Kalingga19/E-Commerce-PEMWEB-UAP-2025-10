@@ -54,4 +54,8 @@ class Transaction extends Model
         return $this->details(); 
     }
 
+    public function seller()
+    {
+        return $this->belongsTo(User::class, 'seller_id');
+    }
 }

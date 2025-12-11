@@ -18,7 +18,14 @@ class AdminTransactionController extends Controller
     // Detail Transaksi
     public function show($id)
     {
-        $transaction = Transaction::with(['buyer', 'seller', 'product'])->findOrFail($id);
+        $transaction = Transaction::with([
+            'buyer',
+            'store',
+            'store.user',
+            'transactionDetails',
+            'transactionDetails.product',
+            'transactionDetails.product.productImages'
+        ])->findOrFail($id);
         return view('admin.transactions.show', compact('transaction'));
     }
 
