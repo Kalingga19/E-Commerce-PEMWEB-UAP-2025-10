@@ -19,9 +19,17 @@ class HomeController extends Controller
         elseif ($sort == 'name_asc') $products->orderBy('name');
         else $products->latest();
 
+        // 🔥 MASUKKAN DI SINI — DI DALAM FUNCTION!
+        $latestProducts = Product::with('productImages')
+            ->latest()
+            ->take(5)
+            ->get();
+        // 🔥 END
+
         return view('customer.home', [
             'categories' => ProductCategory::all(),
             'products' => $products->paginate(12),
+            'latestProducts' => $latestProducts,
         ]);
     }
 
@@ -51,5 +59,4 @@ class HomeController extends Controller
             'selectedCategory' => $category,
         ]);
     }
-
 }
