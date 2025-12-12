@@ -1,3 +1,7 @@
+**Anggota Kelompok :**
+1. Kalingga Syafa Nagita (245150601111017)
+2. Mutiara Ardi Firdausi (245150600111204)
+
 # Zylomart – Web Aplikasi E-Commerce Fashion Berbasis Laravel
 Zylomart adalah web aplikasi **E-Commerce Fashion** berbasis **Laravel 12** yang menyediakan penjualan berbagai produk pakaian seperti **kaos, blazer, celana, blouse, dan rok**.  Aplikasi ini dikembangkan menggunakan **Laravel Breeze** sebagai starter autentikasi dan menerapkan **Role Based Access Control (RBAC)**, **manajemen toko fashion**, serta **sistem pembayaran berbasis saldo (wallet) dan Virtual Account (VA)**.
 
