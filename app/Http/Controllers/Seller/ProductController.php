@@ -91,6 +91,7 @@ class ProductController extends Controller
             'stock' => 'required|integer',
             'weight' => 'nullable|numeric',
             'images.*' => 'nullable|image|max:5120',
+            'description' => 'required|string',
         ]);
 
         /** UPDATE FIELD PRODUK */

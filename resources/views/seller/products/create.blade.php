@@ -315,7 +315,7 @@
                                 </div>
                                 <textarea name="description" rows="6"
                                     class="pl-10 pt-3 w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-200 resize-none"
-                                    placeholder="Deskripsikan produk Anda secara detail..."></textarea>
+                                    placeholder="Deskripsikan produk Anda secara detail..." required></textarea>
                             </div>
                             <div class="flex justify-between items-center mt-2">
                                 <p class="text-sm text-gray-500">Jelaskan spesifikasi, keunggulan, dan detail produk</p>
