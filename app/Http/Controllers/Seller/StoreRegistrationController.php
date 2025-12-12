@@ -24,6 +24,7 @@ class StoreRegistrationController extends Controller
             'phone' => 'required|string|max:30',
             'city' => 'required|string|max:100',
             'address' => 'required|string',
+            'about' => 'nullable|string',
         ]);
 
         $store = Store::create([
@@ -32,7 +33,9 @@ class StoreRegistrationController extends Controller
             'phone' => $request->phone,
             'city' => $request->city,
             'address' => $request->address,
+            'about' => $request->about,
             'is_verified' => false,
+            'address_id' => $request->address_id,
         ]);
 
         $admins = User::where('role', 'admin')->get();

@@ -185,10 +185,10 @@ Route::middleware(['auth', 'seller'])->prefix('seller')->name('seller.')->group(
     Route::get('/seller/store/register', [StoreRegistrationController::class, 'create'])->name('seller.store.create');
     Route::post('/seller/store/register', [StoreRegistrationController::class, 'store'])->name('seller.store.store');
 
-    Route::get('/seller/store/verify', [StoreRegistrationController::class, 'verify'])->name('seller.store.verify');
-    Route::post('/seller/store/verify', [StoreRegistrationController::class, 'submitVerification'])->name('seller.store.verify.submit');
+    Route::get('/seller/store/verify', [StoreRegistrationController::class, 'verify'])->name('store.verify');
+    Route::post('/seller/store/verify', [StoreRegistrationController::class, 'submitVerification'])->name('store.verify.submit');
 
-    Route::get('/seller/store/complete', [StoreRegistrationController::class, 'complete'])->name('seller.store.complete');
+    Route::get('/seller/store/complete', [StoreRegistrationController::class, 'complete'])->name('store.complete');
 
     Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
 });

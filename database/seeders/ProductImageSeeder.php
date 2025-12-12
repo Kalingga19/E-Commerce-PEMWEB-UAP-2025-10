@@ -15,13 +15,13 @@ class ProductImageSeeder extends Seeder
         foreach ($products as $product) {
             ProductImage::create([
                 'product_id' => $product->id,
-                'image' => 'produk-' . $product->id . '-1.jpg',
+                'image' => "images/products/produk-{$product->id}.jpg",
                 'is_thumbnail' => 1,
             ]);
 
             ProductImage::create([
                 'product_id' => $product->id,
-                'image' => 'produk-' . $product->id . '-2.jpg',
+                'image' => "images/products/produk-{$product->id}.jpg",
                 'is_thumbnail' => 0,
             ]);
         }
