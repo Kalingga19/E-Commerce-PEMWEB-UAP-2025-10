@@ -67,6 +67,8 @@ Zylomart menggunakan struktur database **E-Commerce lengkap** dan menyediakan **
 - Gambar Produk
 - Transaksi dan Review
 
+## **Tampilan Produk**
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/e0698ca2-872e-4a73-a77f-59e5d591657b" />
 
 
 
