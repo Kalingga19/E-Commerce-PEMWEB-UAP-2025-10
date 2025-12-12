@@ -116,6 +116,7 @@
                 </div>
 
                 <!-- Saldo Toko Card -->
+                <a href="{{ route('seller.withdrawals.index') }}">
                 <div class="bg-gradient-to-br from-white to-green-50 rounded-2xl shadow-xl p-6 border border-green-100 transform transition-transform duration-300 hover:-translate-y-1">
                     <div class="flex items-center justify-between mb-6">
                         <div class="p-3 bg-green-100 rounded-xl">
@@ -134,6 +135,7 @@
                         <span>Naik Rp 2.5jt bulan ini</span>
                     </div>
                 </div>
+                </a>
             </div>
 
             <!-- Additional Stats -->

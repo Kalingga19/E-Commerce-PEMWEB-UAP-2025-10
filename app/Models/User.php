@@ -7,6 +7,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Store;
+use App\Models\UserBalance;
+use App\Models\VirtualAccount;
+use App\Models\CartItem;
+use App\Models\Transaction;
+use App\Models\Cart;
+use App\Models\Withdrawal;
 
 class User extends Authenticatable
 {
@@ -103,5 +110,10 @@ class User extends Authenticatable
     public function sellerTransactions()
     {
         return $this->hasMany(Transaction::class, 'store_id', 'id');
+    }
+
+    public function withdrawals()
+    {
+        return $this->hasMany(Withdrawal::class, 'store_id');
     }
 }

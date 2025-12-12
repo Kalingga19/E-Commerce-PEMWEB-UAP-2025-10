@@ -11,13 +11,27 @@ class WithdrawalController extends Controller
 {
     public function index()
     {
-        $withdrawals = Auth::user()->store->withdrawals()->latest()->get();
+        $withdrawals = Auth::user()->store
+            ->withdrawals()
+            ->latest()
+            ->paginate(10) // jumlah per halaman
+            ->withQueryString(); // supaya filter status tetap kebawa
+
         return view('seller.withdrawals.index', compact('withdrawals'));
     }
 
     public function create()
     {
-        return view('seller.withdrawals.create');
+        $store = Auth::user()->store;
+
+        $balance = $store->storeBalance->balance ?? 0;
+
+        $withdrawals = $store->withdrawals()
+            ->latest()
+            ->take(3)
+            ->get();
+
+        return view('seller.withdrawals.create', compact('balance', 'withdrawals'));
     }
 
     public function store(Request $request)

@@ -1,18 +1,4 @@
 <x-app-layout>
-<h2 class="text-xl font-bold mb-4">Riwayat Penarikan Dana</h2>
-
-<a href="{{ route('seller.withdrawals.create') }}" 
-    class="bg-blue-600 text-white px-4 py-2 rounded mb-4 inline-block">
-    + Ajukan Withdraw
-</a>
-
-@foreach($withdrawals as $w)
-<div class="bg-white p-4 rounded shadow mb-3">
-    <p>Jumlah: Rp {{ number_format($w->amount) }}</p>
-    <p>Status: {{ $w->status }}</p>
-</div>
-@endforeach
-</x-app-layout><x-app-layout>
     <div class="py-8 px-4 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto">
             <!-- Header Section -->
@@ -23,7 +9,7 @@
                             <div class="p-3 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl shadow-lg mr-4">
                                 <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                                 </svg>
                             </div>
                             <div>
@@ -103,40 +89,6 @@
                 </div>
             </div>
 
-            <!-- Filters Section -->
-            <div class="mb-8">
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                        <div>
-                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Filter Riwayat</h3>
-                            <p class="text-sm text-gray-600">Saring berdasarkan status penarikan</p>
-                        </div>
-                        <div class="flex flex-wrap gap-2">
-                            <a href="{{ request()->fullUrlWithQuery(['status' => null]) }}" 
-                               class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 
-                                      transition duration-200 {{ !request('status') ? 'bg-blue-50 border-blue-300 text-blue-700' : '' }}">
-                                Semua
-                            </a>
-                            <a href="{{ request()->fullUrlWithQuery(['status' => 'pending']) }}" 
-                               class="px-4 py-2 border border-amber-300 text-amber-700 rounded-lg hover:bg-amber-50 
-                                      transition duration-200 {{ request('status') == 'pending' ? 'bg-amber-50 border-amber-400' : '' }}">
-                                Diproses
-                            </a>
-                            <a href="{{ request()->fullUrlWithQuery(['status' => 'completed']) }}" 
-                               class="px-4 py-2 border border-green-300 text-green-700 rounded-lg hover:bg-green-50 
-                                      transition duration-200 {{ request('status') == 'completed' ? 'bg-green-50 border-green-400' : '' }}">
-                                Selesai
-                            </a>
-                            <a href="{{ request()->fullUrlWithQuery(['status' => 'failed']) }}" 
-                               class="px-4 py-2 border border-red-300 text-red-700 rounded-lg hover:bg-red-50 
-                                      transition duration-200 {{ request('status') == 'failed' ? 'bg-red-50 border-red-400' : '' }}">
-                                Ditolak
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Withdrawals List -->
             <div class="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
                 <div class="px-6 py-5 border-b border-gray-200 bg-gray-50">
@@ -188,13 +140,6 @@
                                                     </svg>
                                                     {{ $w->created_at->format('d M Y, H:i') }}
                                                 </div>
-                                                <div class="flex items-center">
-                                                    <svg class="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                                              d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                    </svg>
-                                                    Bank Transfer
-                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -221,16 +166,16 @@
                                 </div>
                             </div>
                             
-                            <!-- Additional Details (Collapsible) -->
+                            <!-- Additional Details -->
                             <div class="mt-4 pt-4 border-t border-gray-200">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <p class="text-sm font-medium text-gray-600 mb-1">Nomor Referensi</p>
-                                        <p class="text-sm text-gray-900 font-mono">REF-{{ strtoupper(substr(md5($w->id), 0, 8)) }}</p>
+                                        <p class="text-sm font-medium text-gray-600 mb-1">Status</p>
+                                        <p class="text-sm text-gray-900">{{ $w->status }}</p>
                                     </div>
                                     <div>
-                                        <p class="text-sm font-medium text-gray-600 mb-1">Rekening Tujuan</p>
-                                        <p class="text-sm text-gray-900">BCA - {{ auth()->user()->bank_account ?? 'Tidak tersedia' }}</p>
+                                        <p class="text-sm font-medium text-gray-600 mb-1">Jumlah</p>
+                                        <p class="text-sm text-gray-900">Rp {{ number_format($w->amount) }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -265,7 +210,7 @@
                 @endif
 
                 <!-- Pagination -->
-                @if($withdrawals->hasPages())
+                @if($withdrawals->count() > 0)
                 <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
                     <div class="flex items-center justify-between">
                         <div class="text-sm text-gray-700">

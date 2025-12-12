@@ -58,7 +58,7 @@
                                 <dl>
                                     <dt class="text-sm font-medium text-gray-500 truncate">Disetujui</dt>
                                     <dd class="text-lg font-semibold text-gray-900">
-                                        {{ $withdrawals->where('status', 'approved')->count() }}
+                                        {{ $approvedCount }}
                                     </dd>
                                 </dl>
                             </div>
@@ -79,7 +79,7 @@
                                 <dl>
                                     <dt class="text-sm font-medium text-gray-500 truncate">Ditolak</dt>
                                     <dd class="text-lg font-semibold text-gray-900">
-                                        {{ $withdrawals->where('status', 'rejected')->count() }}
+                                        {{ $rejectedCount }}
                                     </dd>
                                 </dl>
                             </div>

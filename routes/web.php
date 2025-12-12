@@ -24,6 +24,8 @@ use App\Http\Controllers\Member\CartController;
 
 use App\Http\Controllers\Admin\AdminTransactionController;
 use App\Http\Controllers\Admin\AdminWithdrawalController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 use App\Http\Controllers\ProfileController;
 
@@ -190,6 +192,16 @@ Route::middleware(['auth', 'seller'])->prefix('seller')->name('seller.')->group(
 });
 
 Route::get('/orders', [OrderController::class, 'customerIndex'])->name('orders.customerIndex');
+Route::get('/seller/balance', function () {
+    $store = Auth::user()->store;
+
+    $balance = $store->storeBalance->balance ?? 0;
+
+    return response()->json([
+        'balance' => $balance,
+        'formatted' => number_format($balance, 0, ',', '.'),
+    ]);
+})->middleware('auth');
 
 /*
 |--------------------------------------------------------------------------
@@ -227,8 +239,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     Route::get('/withdrawals', [AdminWithdrawalController::class, 'index'])->name('withdrawals.index');
     Route::get('/withdrawals/{id}', [AdminWithdrawalController::class, 'show'])->name('withdrawals.show');
-    Route::post('/withdrawals/{id}/approve', [AdminWithdrawalController::class, 'approve'])->name('withdrawals.approve');
-    Route::post('/withdrawals/{id}/reject', [AdminWithdrawalController::class, 'reject'])->name('withdrawals.reject');
+    Route::post('/withdrawals/{withdrawal}/approve',
+        [AdminWithdrawalController::class, 'approve'])->name('withdrawals.approve');
+
+    Route::post('/withdrawals/{withdrawal}/reject',
+        [AdminWithdrawalController::class, 'reject'])->name('withdrawals.reject');
 });
 
 

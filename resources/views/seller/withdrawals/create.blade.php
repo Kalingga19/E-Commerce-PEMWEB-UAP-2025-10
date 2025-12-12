@@ -7,7 +7,7 @@
                     <div class="p-3 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl shadow-lg mr-4">
                         <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                     </div>
                     <div>
@@ -26,13 +26,13 @@
                         <div class="flex justify-between items-center">
                             <div>
                                 <p class="text-sm font-medium text-gray-600 mb-1">Saldo Tersedia</p>
-                                <p class="text-3xl font-bold text-gray-900">Rp {{ number_format(auth()->user()->balance ?? 0) }}</p>
+                                <p class="text-3xl font-bold text-gray-900">Rp <span id="balance-text">{{ number_format($balance, 0, ',', '.') }}</span></p>
                                 <p class="text-sm text-gray-500 mt-1">Minimum penarikan: Rp 50.000</p>
                             </div>
                             <div class="p-3 bg-green-100 rounded-full">
                                 <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
                             </div>
                         </div>
@@ -97,10 +97,12 @@
                                         <p class="text-sm font-medium text-gray-600 mb-2">Pilih jumlah cepat:</p>
                                         <div class="grid grid-cols-3 gap-3">
                                             @php
+                                                $currentBalance = auth()->user()->balance->amount ?? 0;
+
                                                 $suggestions = [
-                                                    auth()->user()->balance >= 50000 ? 50000 : null,
-                                                    auth()->user()->balance >= 100000 ? 100000 : null,
-                                                    auth()->user()->balance >= 200000 ? 200000 : null,
+                                                    $currentBalance >= 50000 ? 50000 : null,
+                                                    $currentBalance >= 100000 ? 100000 : null,
+                                                    $currentBalance >= 200000 ? 200000 : null,
                                                 ];
                                             @endphp
                                             
@@ -170,17 +172,12 @@
                                                    hover:from-green-700 hover:to-emerald-700 
                                                    focus:outline-none focus:ring-4 focus:ring-green-500 focus:ring-opacity-50 
                                                    transform hover:-translate-y-0.5 transition-all duration-200
-                                                   disabled:opacity-50 disabled:cursor-not-allowed"
-                                            @if((auth()->user()->balance ?? 0) < 50000) disabled @endif>
+                                                   disabled:opacity-50 disabled:cursor-not-allowed">
+                                        Ajukan Penarikan
                                         <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                                                   d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
                                         </svg>
-                                        @if((auth()->user()->balance ?? 0) >= 50000)
-                                            Ajukan Penarikan
-                                        @else
-                                            Saldo Tidak Mencukupi
-                                        @endif
                                     </button>
                                     
                                     <p class="mt-4 text-center text-sm text-gray-600">
@@ -285,13 +282,40 @@
         </div>
     </div>
 
-    <script>
-        // Auto-format amount input
-        document.querySelector('input[name="amount"]').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/[^\d]/g, '');
-            if (value.length > 0) {
-                e.target.value = parseInt(value).toLocaleString('id-ID');
-            }
-        });
-    </script>
+<script>
+    const balance = {{ $balance }};
+    const display = document.getElementById('amount_display');
+    const real = document.getElementById('amount');
+    const submitBtn = document.getElementById('submit-btn');
+
+    function formatRupiah(value) {
+        return value ? Number(value).toLocaleString('id-ID') : '';
+    }
+
+    function checkBalance() {
+        const amount = parseInt(real.value || 0);
+
+        if (amount >= 50000 && amount <= balance) {
+            submitBtn.disabled = false;
+            submitBtn.innerText = 'Ajukan Penarikan';
+        } else {
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Saldo Tidak Mencukupi';
+        }
+    }
+
+    display.addEventListener('input', function () {
+        let raw = this.value.replace(/\D/g, '');
+        real.value = raw;
+        this.value = formatRupiah(raw);
+        checkBalance();
+    });
+
+    function setAmount(val) {
+        real.value = val;
+        display.value = formatRupiah(val);
+        checkBalance();
+    }
+</script>
+
 </x-app-layout>
