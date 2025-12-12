@@ -1,3 +1,75 @@
+# Zylomart – Web Aplikasi E-Commerce Fashion Berbasis Laravel
+Zylomart adalah web aplikasi **E-Commerce Fashion** berbasis **Laravel 12** yang menyediakan penjualan berbagai produk pakaian seperti **kaos, blazer, celana, blouse, dan rok**.  Aplikasi ini dikembangkan menggunakan **Laravel Breeze** sebagai starter autentikasi dan menerapkan **Role Based Access Control (RBAC)**, **manajemen toko fashion**, serta **sistem pembayaran berbasis saldo (wallet) dan Virtual Account (VA)**.
+
+
+## 🚀 Fitur Utama Zylomart
+### 🔐 Role Based Access Control (RBAC)
+Zylomart membagi pengguna ke dalam beberapa peran dengan hak akses yang berbeda:
+- **Admin**  
+  Mengelola pengguna dan memverifikasi toko fashion.
+- **Seller (Member)**  
+  Mengelola toko fashion, produk pakaian, dan pesanan.
+- **Customer**  
+  Melakukan pembelian produk fashion dan transaksi.
+Setiap halaman dilindungi oleh **middleware Laravel** sesuai dengan peran pengguna dan status kepemilikan toko.
+
+## 🛍️ Fitur Customer (Pembeli Fashion)
+### Homepage
+Menampilkan daftar produk fashion terbaru seperti **kaos, blazer, celana, blouse, dan rok**, lengkap dengan filter kategori.
+### Halaman Detail Produk
+Menampilkan detail produk pakaian, gambar produk, informasi toko penjual, dan ulasan pelanggan.
+### Checkout
+Proses pembelian produk fashion dengan pengisian alamat, pilihan pengiriman, serta metode pembayaran.
+### Riwayat Transaksi
+Menampilkan histori pembelian produk fashion yang pernah dilakukan oleh customer.
+### Topup Saldo (Wallet)
+Customer dapat melakukan topup saldo untuk mempercepat proses checkout.
+
+## 🏪 Fitur Seller (Toko Fashion)
+Fitur ini **hanya dapat diakses oleh Member yang telah mendaftarkan toko**.
+### Pendaftaran & Manajemen Toko Fashion
+Mengelola profil toko seperti nama, logo, deskripsi, dan rekening penjual.
+### Manajemen Kategori Produk
+Mengelola kategori pakaian seperti **kaos, blazer, celana, blouse, dan rok**.
+### Manajemen Produk Fashion
+CRUD produk fashion beserta gambar produk dan pengaturan thumbnail.
+### Manajemen Pesanan
+Melihat pesanan masuk dan memperbarui status pengiriman.
+### Saldo Toko
+Melihat saldo hasil penjualan produk fashion.
+### Penarikan Dana
+Mengajukan penarikan saldo toko ke rekening penjual.
+
+## 👑 Fitur Admin
+Fitur ini **hanya dapat diakses oleh pengguna dengan role admin**.
+### Verifikasi Toko Fashion
+Menyetujui atau menolak pendaftaran toko penjual fashion.
+### Manajemen User & Toko
+Mengelola seluruh pengguna dan toko yang terdaftar di sistem.
+
+## 💰 Sistem Pembayaran & Keuangan
+Zylomart menggunakan dua skema pembayaran utama:
+### Pembayaran dengan Saldo (Wallet)
+Saldo pengguna akan dipotong langsung saat pembelian produk fashion.
+### Pembayaran Transfer Virtual Account (VA)
+Sistem akan menghasilkan **kode Virtual Account (VA) unik** untuk setiap transaksi pembelian.
+Seluruh pembayaran diproses melalui **Halaman Pembayaran Terpusat**, baik untuk:
+- Topup saldo
+- Pembayaran produk fashion
+
+## 🗄️ Database & Seeder
+Zylomart menggunakan struktur database **E-Commerce lengkap** dan menyediakan **Database Seeder** untuk data awal, meliputi:
+- Admin
+- Seller dan Customer
+- Toko Fashion
+- Kategori Produk Fashion
+- Produk Fashion
+- Gambar Produk
+- Transaksi dan Review
+
+
+
+
 # **Ujian Praktikum Pemrograman Web Aplikasi E-Commerce (Laravel)** 
 
 ## **Konteks Proyek**
