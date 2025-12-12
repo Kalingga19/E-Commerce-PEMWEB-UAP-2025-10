@@ -148,24 +148,24 @@
 
                 <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                     @foreach($categories as $category)
-                        <a href="{{ route('category.filter', $category->slug) }}" class="group">
+                    <a href="{{ route('category.filter', $category->slug) }}" class="group">
+                        <div
+                            class="bg-white p-6 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 text-center">
                             <div
-                                class="bg-white p-6 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 text-center">
-                                <div
-                                    class="w-16 h-16 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                                    <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                                    </svg>
-                                </div>
-                                <h3
-                                    class="font-semibold text-gray-800 group-hover:text-blue-600 transition-colors duration-300">
-                                    {{ $category->name }}
-                                </h3>
-                                <p class="text-sm text-gray-500 mt-1">{{ rand(50, 500) }} produk</p>
+                                class="w-16 h-16 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                                <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                                </svg>
                             </div>
-                        </a>
+                            <h3
+                                class="font-semibold text-gray-800 group-hover:text-blue-600 transition-colors duration-300">
+                                {{ $category->name }}
+                            </h3>
+                            <p class="text-sm text-gray-500 mt-1">{{ rand(50, 500) }} produk</p>
+                        </div>
+                    </a>
                     @endforeach
                 </div>
             </div>
@@ -190,32 +190,32 @@
                 </div>
 
                 <!-- Products Grid -->
-                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8">
                     @if(isset($latestProducts) && $latestProducts->count())
                     @foreach($latestProducts as $product)
                     @php
                     $thumb = $product->productImages->where('is_thumbnail', true)->first() ?? $product->productImages->first();
                     @endphp
-                    
+
                     <div class="bg-white rounded-2xl shadow-md hover:shadow-xl transition overflow-hidden group">\
-                        
-                            <!-- Gambar Produk -->
-                             <div class="relative bg-gray-100 overflow-hidden aspect-[4/5]">
-                                @if($thumb)
-                                <img src="{{ asset('storage/' . $thumb->image) }}"class="w-full h-full object-contain p-2 transition duration-300 group-hover:scale-105">
-                                @else
-                                <div class="w-full h-full flex items-center justify-center text-gray-400">
-                                    No Image
-                                </div>
-                                @endif
+
+                        <!-- Gambar Produk -->
+                        <div class="relative bg-gray-100 overflow-hidden aspect-[4/5]">
+                            @if($thumb)
+                            <img src="{{ asset('storage/' . $thumb->image) }}" class="w-full h-full object-contain p-2 transition duration-300 group-hover:scale-105">
+                            @else
+                            <div class="w-full h-full flex items-center justify-center text-gray-400">
+                                No Image
                             </div>
-                            
-                            <!-- Info -->
-                             <div class="p-3">
-                                <h3 class="font-semibold text-gray-900 mb-1 text-sm line-clamp-2 min-h-[2.3rem]">
+                            @endif
+                        </div>
+
+                        <!-- Info -->
+                        <div class="p-3">
+                            <h3 class="font-semibold text-gray-900 mb-1 text-sm line-clamp-2 min-h-[2.3rem]">
                                 {{ $product->name }}
                             </h3>
-                            
+
                             <p class="text-green-600 font-bold text-base mb-1">
                                 Rp {{ number_format($product->price, 0, ',', '.') }}
                             </p>
@@ -223,29 +223,29 @@
                             <div class="flex items-center gap-1 mb-3">
                                 <span class="text-xs text-gray-600">⭐ 4.8</span>
                             </div>
-                            
+
                             <form action="{{ route('cart.add') }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="product_id" value="{{ $product->id }}">
                                 <input type="hidden" name="qty" value="1">
-                                
+
                                 <button type="submit" class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg">
                                     + Tambah
                                 </button>
                             </form>
                         </div>
                     </div>
-                    
+
                     @endforeach
-                    
+
                     @else
                     <p class="col-span-full text-center text-gray-500">
                         Produk belum tersedia
                     </p>
-                    
+
                     @endif
                 </div>
-                
+
                 <!-- View All Button -->
                 <div class="text-center mt-12">
                     <a href="{{ route('products.index') }}"
@@ -255,6 +255,68 @@
                 </div>
             </div>
         </section>
+
+        {{-- CTA Register Store (hanya member yang login & belum verified) --}}
+        @auth
+        @if(auth()->user()->role === 'member')
+        @php
+        $store = auth()->user()->store;
+        @endphp
+
+        <section class="py-14 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="rounded-3xl overflow-hidden border border-blue-100 shadow-sm bg-gradient-to-r from-blue-50 to-indigo-50">
+                    <div class="p-8 md:p-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                        <div class="max-w-2xl">
+                            <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+                                Mau mulai jualan di platform ini?
+                            </h2>
+
+                            @if(!$store)
+                            <p class="text-gray-700">
+                                Daftarkan toko kamu sekarang. Proses cepat dan setelah diverifikasi kamu bisa akses dashboard seller.
+                            </p>
+                            @elseif($store && !$store->is_verified)
+                            <p class="text-gray-700">
+                                Toko <b>{{ $store->name }}</b> sudah terdaftar, tinggal tunggu verifikasi admin / lanjut verifikasi.
+                            </p>
+                            @else
+                            <p class="text-gray-700">
+                                Toko kamu sudah aktif. Kamu bisa langsung masuk ke dashboard seller.
+                            </p>
+                            @endif
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            @if(!$store)
+                            <a href="{{ route('store.register') }}"
+                                class="inline-flex items-center justify-center px-7 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-lg transition">
+                                Daftar Toko
+                            </a>
+                            @elseif($store && !$store->is_verified)
+                            <a href="{{ route('seller.store.verify') }}"
+                                class="inline-flex items-center justify-center px-7 py-4 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-lg transition">
+                                Lanjut Verifikasi
+                            </a>
+
+                            <a href="{{ route('store.register') }}"
+                                class="inline-flex items-center justify-center px-7 py-4 rounded-2xl bg-white hover:bg-gray-50 text-gray-800 font-semibold border border-gray-200 transition">
+                                Edit Data Toko
+                            </a>
+                            @else
+                            <a href="{{ route('seller.dashboard') }}"
+                                class="inline-flex items-center justify-center px-7 py-4 rounded-2xl bg-green-600 hover:bg-green-700 text-white font-semibold shadow-lg transition">
+                                Ke Dashboard Seller
+                            </a>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        @endif
+        @endauth
+
 
         <!-- Why Choose Us Section -->
         <section class="py-16 bg-gray-50">

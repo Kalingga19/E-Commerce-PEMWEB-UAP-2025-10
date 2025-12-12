@@ -19,20 +19,31 @@ class StoreRegistrationController extends Controller
 
     public function store(Request $request)
     {
-        $store = Store::create([
-                'user_id' => auth()->id(),
-                'name' => $request->name,
-                'is_verified' => false,
-            ]);
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'required|string|max:30',
+            'city' => 'required|string|max:100',
+            'address' => 'required|string',
+        ]);
 
-            // KIRIM NOTIFIKASI KE ADMIN
-            $admins = User::where('role', 'admin')->get();
-            foreach ($admins as $admin) {
-                $admin->notify(new StoreNeedsVerification($store));
+        $store = Store::create([
+            'user_id' => auth()->id(),
+            'name' => $request->name,
+            'phone' => $request->phone,
+            'city' => $request->city,
+            'address' => $request->address,
+            'is_verified' => false,
+        ]);
+
+        $admins = User::where('role', 'admin')->get();
+        foreach ($admins as $admin) {
+            $admin->notify(new StoreNeedsVerification($store));
         }
 
-        return redirect()->route('dashboard')->with('success', 'Toko berhasil didaftarkan dan menunggu verifikasi admin.');
+        return redirect()->route('dashboard')
+            ->with('success', 'Toko berhasil didaftarkan dan menunggu verifikasi admin.');
     }
+
 
     public function submitVerification(Request $request)
     {
@@ -70,7 +81,7 @@ class StoreRegistrationController extends Controller
             'name'   => 'required',
             'phone'  => 'required',
             'city'   => 'required',
-            'address'=> 'required',
+            'address' => 'required',
         ]);
 
         $store = Auth::user()->store;
@@ -79,7 +90,7 @@ class StoreRegistrationController extends Controller
             'name'   => $request->name,
             'phone'  => $request->phone,
             'city'   => $request->city,
-            'address'=> $request->address,
+            'address' => $request->address,
         ]);
 
         return redirect()->route('seller.dashboard')->with('success', 'Informasi toko berhasil diperbarui.');
@@ -119,5 +130,4 @@ class StoreRegistrationController extends Controller
     {
         return view('seller.store.completed');
     }
-
 }
