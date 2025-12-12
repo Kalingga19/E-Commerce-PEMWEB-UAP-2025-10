@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Member\ProductController;
+use App\Http\Controllers\Member\ProductCatalogController;
 use App\Http\Controllers\Member\CheckoutController;
 use App\Http\Controllers\Member\HistoryController;
 use App\Http\Controllers\Member\WalletController;
@@ -69,6 +70,7 @@ Route::get('/dashboard', function () {
 |--------------------------------------------------------------------------
 */
 Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.show');
+Route::get('/products', [ProductCatalogController::class, 'index'])->name('products.index');
 
 
 /*

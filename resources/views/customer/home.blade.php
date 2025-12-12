@@ -179,7 +179,7 @@
                         <h2 class="text-3xl font-bold text-gray-900 mb-2">Produk Terbaru</h2>
                         <p class="text-gray-600">Temukan produk berkualitas dari berbagai toko terpercaya</p>
                     </div>
-                    <a href="{{ route('home') }}"
+                    <a href="{{ route('products.index') }}"
                         class="text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-2">
                         Lihat Semua
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -248,7 +248,7 @@
                 
                 <!-- View All Button -->
                 <div class="text-center mt-12">
-                    <a href="{{ route('home') }}"
+                    <a href="{{ route('products.index') }}"
                         class="inline-block px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                         Lihat Semua Produk
                     </a>

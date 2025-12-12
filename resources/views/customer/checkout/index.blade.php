@@ -457,7 +457,7 @@
 
     {{-- SCRIPT UNTUK HITUNG TOTAL DINAMIS --}}
     <script>
-        let subtotal   = {{ $subtotal }};
+        let subtotal   = { $subtotal };
         let shipping   = 20000;
         let serviceFee = 5000;
 
