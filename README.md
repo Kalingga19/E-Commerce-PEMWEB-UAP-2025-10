@@ -73,6 +73,12 @@ Zylomart menggunakan struktur database **E-Commerce lengkap** dan menyediakan **
 
 ## **Tampilan Produk**
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/e0698ca2-872e-4a73-a77f-59e5d591657b" />
+kalau di klik "Lihat Semua Produk" muncul :
+## **Katalog Produk**
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/6afa9e65-3240-4218-8da7-6a51b81fcd14" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/0f65de2b-8d83-455c-b041-ce56abbc6526" />
+
+
 
 
 
